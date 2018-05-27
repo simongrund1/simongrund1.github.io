@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>News on Simon Grund</title>
+    <link>https://simongrund1.github.io/tags/news/</link>
+    <description>Recent content in News on Simon Grund</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 27 May 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://simongrund1.github.io/tags/news/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Hello, World!</title>
+      <link>https://simongrund1.github.io/posts/hello_world/</link>
+      <pubDate>Sun, 27 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://simongrund1.github.io/posts/hello_world/</guid>
+      <description>This first post marks the launch of my website, with which I have been tinkering for some time now. From time to time, I will update the blog with new posts about topics related to quantitative psychology, statistical methods, R, Vim, and other things that interest me. So be sure to check back periodically!
+In addition, you can find information about my publications and software projects. Whenever possible, I will update this information, including full-text versions of my articles and links to published and manuscript versions.</description>
+    </item>
+    
+  </channel>
+</rss>

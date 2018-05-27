@@ -2,7 +2,7 @@
 title: 'Hello, World!'
 date: 2018-05-27
 tags: [ "news" ]
-draft: true
+draft: false
 ---
 
 ```{r setup, include=FALSE, cache=FALSE}
