@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.40.3" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>mitml &middot; Simon Grund</title>
+
+  
+  <link rel="stylesheet" href="https://simongrund1.github.io/css/print.css" media="print">
+  <link rel="stylesheet" href="https://simongrund1.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://simongrund1.github.io/css/hyde.css">
+
+  
+  <script defer src="https://simongrund1.github.io/js/fontawesome-all.js"></script>
+  <link rel="stylesheet" href="https://simongrund1.github.io/css/academicons.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro|Source+Serif+Pro|Source+Code+Pro">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/icon.png">
+  <link rel="shortcut icon" href="/icon-small.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="Simon Grund" />
+
+  
+  <link rel="stylesheet" href="https://simongrund1.github.io/css/code.css">
+  
+  <script src="https://simongrund1.github.io/js/highlight.pack.js"></script>
+  <script src="https://simongrund1.github.io/js/highlight.better-r.min.js"></script>
+
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+  
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  
+    MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      preferredFont: "TeX",
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+           extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    }
+    });
+    MathJax.Hub.Config({
+      "HTML-CSS": {scale: 85}
+    });  
+  
+    MathJax.Hub.Queue(function() {
+    
+    
+    var i, text, code, codes = document.getElementsByTagName('code');
+      for (i = 0; i < codes.length;) {
+        code = codes[i];
+        if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+          text = code.textContent;
+          if (/^\$[^$]/.test(text) && /[^$]\$$/.test(text)) {
+            text = text.replace(/^\$/, '\\(').replace(/\$$/, '\\)');
+            code.textContent = text;
+          }
+          if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+              /^\$(.|\s)+\$$/.test(text) ||
+              /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+            code.outerHTML = code.innerHTML;  
+            continue;
+          }
+        }
+        i++;
+      }
+    })(); 
+
+    MathJax.Hub.Config({
+    
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+    });
+
+    MathJax.Hub.Config({
+    
+      "HTML-CSS": {
+        styles: {
+          ".MathJax .mo, .MathJax .mi": {color: "black ! important"}
+        }
+      }
+    });
+  </script>
+
+  
+  <script>
+    function toggleNavbar() {
+      var navMenu = document.getElementById("sidebar-main");
+      var switchIcon = document.getElementById("sidebar-switch-icon");
+      if ( navMenu.classList.contains("hidden") ) {
+         navMenu.classList.remove("hidden");
+         navMenu.style.maxHeight = "25rem";
+         switchIcon.classList.remove("fa-chevron-down");
+         switchIcon.classList.add("fa-chevron-up");
+      } else {
+         navMenu.classList.add("hidden");
+         navMenu.style.maxHeight = "0";
+         switchIcon.classList.remove("fa-chevron-up");
+         switchIcon.classList.add("fa-chevron-down");
+      }
+    }
+  </script>
+</head>
+
+  <body class="theme-base-00 ">
+  <div class="sidebar">
+
+  <div id="sidebar-main" class="container sidebar-sticky hidden">
+
+    <div class="sidebar-about">
+      <a href="https://simongrund1.github.io/"><h1>Simon Grund</h1></a>
+    </div>
+
+    <p class="sidebar-orcid">
+      <i class="ai ai-orcid" style="color:#fff"></i>
+      <a href="https://orcid.org/0000-0002-1290-8986">0000-0002-1290-8986</a>
+    </p>
+
+    PhD, Quantitative Psychology
+
+    <ul class="sidebar-nav">
+      <li><a href="https://simongrund1.github.io/">Home</a> </li>
+      <li><a href="/posts"> Blog </a></li><li><a href="/publications/"> Publications </a></li><li><a href="/software/"> Software </a></li>
+    </ul>
+
+    <div class="sidebar-links">
+      <a href="https://twitter.com/simongrund89">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a href="https://github.com/simongrund1">
+        <i class="fab fa-github"></i>
+      </a>
+      <a href="https://www.researchgate.net/profile/Simon_Grund">
+        <i class="ai ai-researchgate"></i>
+      </a>
+      <a href="https://scholar.google.de/citations?user=RkmNDJgAAAAJ">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <p>Based on Hyde theme for Hugo</p>
+      <p>&copy; 2018 / All rights reserved</p>
+    </div>
+
+  </div>
+
+  <div id="sidebar-switch" onclick="toggleNavbar()">
+    <i id="sidebar-switch-icon" class="fas fa-chevron-down"></i>
+  </div>
+
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1 class="post-title">mitml: Tools for multiple imputation in multilevel modeling</h1>
+  <span class="post-date">May 1, 2018<span style="padding-left:0.5rem"></span></span>
+  
+
+<p>This <a href="https://www.r-project.org/">R</a> package provides tools for multiple imputation of missing data in multilevel modeling.
+It includes a user-friendly interface to the packages <code>pan</code> and <code>jomo</code>, and several functions for visualization, data management, and the analysis of multiply imputed data sets.</p>
+
+<p>The purpose of <code>mitml</code> is to provide users with a set of effective and user-friendly tools for multiple imputation of multilevel data without requiring advanced knowledge of its statistical underpinnings.
+Examples and additional information can be found in the official <a href="https://cran.r-project.org/package=mitml/mitml.pdf">documentation</a> of the package and in the <a href="https://github.com/simongrund1/mitml/wiki">Wiki</a> pages on GitHub.</p>
+
+<h4 id="cran-version">CRAN version</h4>
+
+<p>The official version of <code>mitml</code> is hosted on CRAN and may be found <a href="https://cran.r-project.org/package=mitml">here</a>. The CRAN version can be installed from within R using:</p>
+
+<pre><code class="language-r">install.packages(&quot;mitml&quot;)
+</code></pre>
+
+<h4 id="github-version">GitHub version</h4>
+
+<p>The development version of <code>mitml</code> is hosted on GitHub, allowing better tracking of <a href="https://github.com/simongrund1/mitml/issues">issues</a> and possibly containing features and changes in advance. The GitHub version can be installed using <code>devtools</code> as:</p>
+
+<pre><code class="language-r">install.packages(&quot;devtools&quot;)
+devtools::install_github(&quot;simongrund1/mitml&quot;)
+</code></pre>
+
+<h4 id="documentation-pdf">Documentation (PDF)</h4>
+
+<p>The official <a href="https://cran.r-project.org/web/packages/mitml/mitml.pdf">documentation</a> of the package can be found on <a href="https://cran.r-project.org/package=mitml">CRAN</a>.</p>
+
+<h4 id="vignettes-html">Vignettes (HTML)</h4>
+
+<p>Further examples and documentation are provided in HTML vignettes on <a href="https://cran.r-project.org/package=mitml">CRAN</a> and on the follwing pages.</p>
+
+<ul>
+<li><a href="https://cdn.rawgit.com/simongrund1/mitml/abdc7d58/vignettes/Introduction.html">Introduction</a></li>
+<li><a href="https://cdn.rawgit.com/simongrund1/mitml/abdc7d58/vignettes/Level2.html">Imputation of missing data at Level 2</a></li>
+<li><a href="https://cdn.rawgit.com/simongrund1/mitml/abdc7d58/vignettes/Analysis.html">Analysis of multiply imputed data sets</a></li>
+</ul>
+
+<p>If you use <code>mitml</code> and have suggestions for improvement, please email me (see <a href="https://cran.r-project.org/package=mitml">here</a>) or file an <a href="https://github.com/simongrund1/mitml/issues">issue</a>.</p>
+
+<p><a href="https://cran.r-project.org/package=mitml"><img src="http://www.r-pkg.org/badges/version/mitml" alt="" /></a><a href="https://cran.r-project.org/package=mitml"><img src="http://cranlogs.r-pkg.org/badges/mitml" alt="" /></a></p>
+
+</div>
+
+
+  <h2>Reference</h2>
+  <div class="post">
+  <div class="software">
+  <i class="fas fa-laptop fa-pull-left software-symbol"></i>
+  <a href="https://simongrund1.github.io/software/mitml/">mitml</a>:
+  Tools for multiple imputation in multilevel modeling
+   <a href="https://cran.r-project.org/package=mitml"> [CRAN]</a>
+   <a href="https://github.com/simongrund1/mitml"> [Github]</a>
+</div>
+
+
+  </div>
+
+    </div>
+
+    
+  </body>
+</html>

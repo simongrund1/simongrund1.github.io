@@ -1,0 +1,406 @@
+/*
+ * Layout based on:
+ *
+ *  __                  __
+ * /\ \                /\ \
+ * \ \ \___   __  __   \_\ \     __
+ *  \ \  _ `\/\ \/\ \  /'_` \  /'__`\
+ *   \ \ \ \ \ \ \_\ \/\ \_\ \/\  __/
+ *    \ \_\ \_\/`____ \ \___,_\ \____\
+ *     \/_/\/_/`/___/> \/__,_ /\/____/
+ *                /\___/
+ *                \/__/
+ *
+ * Designed, built, and released under MIT license by @mdo. Learn more at
+ * https://github.com/poole/hyde.
+ */
+
+
+/*
+ * Contents
+ *
+ * Color table
+ * Global resets
+ * Sidebar
+ * Container
+ * Reverse layout
+ * Themes
+ */
+
+/*
+ * Color table
+ */
+
+/*
+ * black: #282828
+ * black2: #3c3836
+ * black3: #504945
+ * --
+ * white: #fbf1c7
+ * white2: #ebdbb2
+ * white3: #d5c4a1
+ * --
+ * bg: #f6f3f0
+ * fg: #3c3836
+ * --
+ * darkgrey: #7c6f64
+ * mediumgrey: #928374
+ * lightgrey: #a89984
+ * --
+ * darkred: #9d0006
+ * mediumred: #cc241d
+ * lightred: #fb4934
+ * --
+ * darkgreen: #79840e
+ * mediumgreen: #98971a
+ * lightgreen: #b8bb26
+ * --
+ * darkyellow: #b57614
+ * mediumyellow: #d79921
+ * lightyellow: #fabd2f
+ * --
+ * darkblue: #076678
+ * mediumblue: #458588
+ * lightblue: #83a598
+ * --
+ * darkmagenta: #8f3f71
+ * mediummagenta: #b16286
+ * lightmagenta: #d3869b
+ * --
+ * darkcyan: #427b58
+ * mediumcyan: #689d6a
+ * lightcyan: #8ec07c
+ * --
+ * darkorange: #af3a03
+ * mediumorange: #d65d0e
+ * lightorange: #fe8019
+*/
+
+
+/*
+ * Global (update variables set by Poole)
+ */
+
+html {
+  font-family: 'Source Sans Pro', serif;
+  font-size: calc(0.45em + 0.5vw + 0.5vh);
+}
+body {
+  color: #3c3836;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Source Serif Pro', sans-serif;
+  color: #504945;
+  clear: left;
+}
+.page-title, .post-title, .post-title a {
+  color: #504945;
+}
+@media (min-width: 38em) {
+  html {
+    font-size: calc(0.45em + 0.4vw + 0.4vh);
+  }
+}
+
+/* Decorated links */
+
+a {
+  color: #458588;
+}
+
+a:hover,
+a:focus {
+  text-decoration: underline;
+}
+
+/*
+ * Content
+ */
+
+/* Sections */
+
+.section {
+  margin-top: 2.25rem;
+}
+
+/* Dates */
+.post-date, .list-date, .summary-date {
+  color: #928374;
+}
+.post-date, .summary-date {
+  margin-top: -0.5rem;
+  display: block;
+}
+.post-date {
+  margin-bottom: 2.25rem;
+}
+.summary-date {
+  margin-bottom: 0.9rem;
+}
+.post-tags {
+  margin-top: 0.5rem;
+  color: #928374;
+  clear: left;
+}
+
+/* Lists */
+
+.posts-list {
+  margin-bottom: calc(4em - 10px);
+}
+
+.publication {
+  padding-left: 25px;
+  padding-bottom: 10px;
+}
+
+.publication-symbol {
+  margin-top: 5px;
+  margin-left: -22px;
+  font-size: 0.85rem;
+  color: #928374;
+}
+
+.software {
+  padding-left: 25px;
+  padding-bottom: 10px;
+}
+
+.software-symbol {
+  margin-top: 6px;
+  margin-left: -24px;
+  font-size: 0.75rem;
+  color: #928374;
+}
+
+/* Summaries */
+
+img.thumbnail {
+  float: left;
+  padding: 0.3rem 1.0rem 0.2rem 0;
+  max-height: 120px;
+  max-width: 120px;
+  width: auto;
+  height: auto;
+}
+@media (min-width: 48em) {
+  img.thumbnail {
+    max-height: 200px;
+    max-width: 200px;
+  }
+}
+
+
+/*
+ * Sidebar
+ *
+ * Flexible banner for housing site name, intro, and "footer" content. Starts
+ * out above content in mobile and later moves to the side with wider viewports.
+ */
+
+.sidebar {
+  padding: 2rem 1rem;
+  background-color: #282828;
+  color: #928374;
+}
+@media (min-width: 48em) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 14rem;
+    text-align: left;
+  }
+}
+
+/* About section */
+.sidebar-about h1 {
+  color: #fff;
+  margin-top: 0;
+  font-family: 'Source Serif Pro', serif;
+  font-size: 1.50rem;
+  display: inline;
+}
+.sidebar-about a:hover h1,
+.sidebar-about a:focus h1 {
+  text-decoration: underline;
+}
+.sidebar-orcid {
+  margin-top: 0.3rem;
+  margin-bottom: 1.2rem;
+  font-size: 0.835rem;
+}
+
+/* Sidebar nav */
+.sidebar-nav {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  padding-left: 0;
+  list-style: none;
+  font-size: 1.25rem;
+}
+.sidebar-nav-item {
+  display: block;
+}
+.sidebar-nav-item.active {
+  font-weight: bold;
+}
+.sidebar-nav a:hover,
+.sidebar-nav a:focus {
+  text-decoration: underline;
+}
+ul.sidebar-nav li {
+  margin-top: 0.2rem;
+}
+/* alternating colors */
+ul.sidebar-nav li:nth-child(2n+1) {
+  border-left: thick solid #458588; /* darkblue */
+  padding-left: 0.25rem;
+}
+ul.sidebar-nav li:nth-child(2n+2) {
+  border-left: thick solid #d79921; /* darkyellow */
+  padding-left: 0.25rem;
+}
+ul.sidebar-nav li:nth-child(2n+3) {
+  border-left: thick solid #98971a; /* darkgreen */
+  padding-left: 0.25rem;
+}
+ul.sidebar-nav li:nth-child(2n+5) {
+  border-left: thick solid #b16286; /* darkmagenta */
+  padding-left: 0.25rem;
+}
+ul.sidebar-nav li:nth-child(2n+4) {
+  border-left: thick solid #d65d0e; /* darkorange */
+  padding-left: 0.25rem;
+}
+ul.sidebar-nav li:nth-child(2n+7) {
+  border-left: thick solid #cc241d; /* darkred */
+  padding-left: 0.25rem;
+}
+ul.sidebar-nav li:nth-child(2n+8) {
+  border-left: thick solid #689d6a; /* darkcyan */
+  padding-left: 0.25rem;
+}
+ 
+/* Sidebar links */
+.sidebar a {
+  color: #fff;
+}
+.sidebar-links a {
+  margin-bottom: 0;
+  margin-right: 0.80rem;
+  padding: 0rem;
+  font-size: 1.5rem;
+  color: #928374;
+}
+.sidebar-links a:hover,
+.sidebar-links a:focus {
+  text-decoration: none;
+  color: #fff;
+}
+
+/* Sidebar footer */
+.sidebar-footer {
+  margin-top: 0;
+  font-size: 0.65rem;
+}
+.sidebar-footer p {
+  margin: 0;
+}
+
+/* Sticky sidebar
+ *
+ * Add the `sidebar-sticky` class to the sidebar's container to affix it the
+ * contents to the bottom of the sidebar in tablets and up.
+ */
+
+/* hide/expand in upright mode */
+#sidebar-switch {
+  cursor: pointer;
+  display: block;
+  text-align: center;
+}
+#sidebar-main {
+  overflow: hidden;
+  max-height: 0;
+  height: auto;
+  transition: max-height 0.25s;
+}
+
+@media (min-width: 48em) {
+  #sidebar-switch {
+    display: none;
+  }
+  #sidebar-main {
+    overflow: visible;
+    max-height: 25rem !important;
+    position: absolute;
+    right:  1rem;
+    bottom: 1rem;
+    left:   1rem;
+  }
+}
+
+/* Container
+ *
+ * Align the contents of the site above the proper threshold with some margin-fu
+ * with a 25%-wide `.sidebar`.
+ */
+
+.content {
+  padding-top:    4rem;
+  padding-bottom: 4rem;
+}
+
+@media (min-width: 48em) {
+  .content {
+    max-width:   38rem;
+    margin-left: 16rem;
+    margin-right: 2rem;
+  }
+}
+
+@media (min-width: 64em) {
+  .content {
+    margin-left: 18rem;
+    margin-right: 4rem;
+  }
+}
+
+
+/*
+ * Fixes and overwrites for display and inline code
+ */
+
+pre, code {
+  font-family: 'Source Code Pro', monospace;
+  background-color: #f9f8f7;
+  border-radius: 3px;
+}
+code {
+  padding: .10em .25em;
+  color: #3c3836;
+}
+pre {
+  padding: 0ex 0ex 0ex 0.8ex;
+  font-size: 0.8rem;
+  line-height: 1.2;
+  white-space: pre;
+  word-break: keep-all;
+  word-wrap: normal;
+}
+
+/*
+ * Fix for MathJax
+ */
+
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    font-color: #000000;
+    color: #000000;
+}
+

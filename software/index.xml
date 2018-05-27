@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Softwares on Simon Grund</title>
+    <link>https://simongrund1.github.io/software/</link>
+    <description>Recent content in Softwares on Simon Grund</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 01 May 2018 22:16:00 +0200</lastBuildDate>
+    
+	<atom:link href="https://simongrund1.github.io/software/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>mitml</title>
+      <link>https://simongrund1.github.io/software/mitml/</link>
+      <pubDate>Tue, 01 May 2018 22:16:00 +0200</pubDate>
+      
+      <guid>https://simongrund1.github.io/software/mitml/</guid>
+      <description>This R package provides tools for multiple imputation of missing data in multilevel modeling. It includes a user-friendly interface to the packages pan and jomo, and several functions for visualization, data management, and the analysis of multiply imputed data sets.
+The purpose of mitml is to provide users with a set of effective and user-friendly tools for multiple imputation of multilevel data without requiring advanced knowledge of its statistical underpinnings.</description>
+    </item>
+    
+  </channel>
+</rss>

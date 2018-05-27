@@ -1,0 +1,94 @@
+/*
+
+Code-Highlighting based on:
+Google Code style (c) Aahan Krish
+
+*/
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 0.5em;
+  color: black;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #928374;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-section,
+.hljs-title,
+.hljs-name {
+  color: #9d0006;
+}
+
+.hljs-type {
+  color: #b57614;
+}
+.hljs-built_in {
+  color: #427b58;
+}
+
+.hljs-variable,
+.hljs-template-variable {
+  color: #660;
+}
+
+.hljs-string,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-regexp {
+  color: #79840e;
+}
+
+.hljs-literal,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-meta,
+.hljs-number,
+.hljs-link {
+  color: #8f3f71;
+}
+
+.hljs-title,
+.hljs-doctag,
+.hljs-attr,
+.hljs-builtin-name,
+.hljs-params {
+  color: #606;
+}
+
+.hljs-attribute,
+.hljs-subst {
+  color: #000;
+}
+
+.hljs-formula {
+  background-color: #eee;
+  font-style: italic;
+}
+
+.hljs-selector-id,
+.hljs-selector-class {
+  color: #000;
+}
+
+.hljs-addition {
+  background-color: #000;
+}
+
+.hljs-deletion {
+  background-color: #f00;
+}
+
+.hljs-doctag,
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}

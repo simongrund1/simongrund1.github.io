@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Simon Grund</title>
+    <link>https://simongrund1.github.io/</link>
+    <description>Recent content on Simon Grund</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sun, 27 May 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="https://simongrund1.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Missing data in multilevel research</title>
+      <link>https://simongrund1.github.io/publications/inpress-chap-apa/</link>
+      <pubDate>Sun, 27 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://simongrund1.github.io/publications/inpress-chap-apa/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Multiple imputation of missing data at level 2: A comparison of fully conditional and joint modeling in multilevel designs</title>
+      <link>https://simongrund1.github.io/publications/2018-jebs/</link>
+      <pubDate>Sat, 26 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://simongrund1.github.io/publications/2018-jebs/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Multiple imputation of missing data for multilevel models: Simulations and recommendations</title>
+      <link>https://simongrund1.github.io/publications/2018-orm/</link>
+      <pubDate>Fri, 25 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://simongrund1.github.io/publications/2018-orm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>The merits of representational pictures in educational assessment: Evidence for cognitive and motivational effects in a time-on-task analysis</title>
+      <link>https://simongrund1.github.io/publications/2017-cep/</link>
+      <pubDate>Thu, 24 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://simongrund1.github.io/publications/2017-cep/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Multiple imputation of missing data in multilevel designs: A comparison of different strategies</title>
+      <link>https://simongrund1.github.io/publications/2017-pm/</link>
+      <pubDate>Wed, 23 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://simongrund1.github.io/publications/2017-pm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Pooling ANOVA results from multiply imputed datasets: A simulation study</title>
+      <link>https://simongrund1.github.io/publications/2016-methodology/</link>
+      <pubDate>Tue, 22 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://simongrund1.github.io/publications/2016-methodology/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Multiple imputation of multilevel missing data: An introduction to the R package pan</title>
+      <link>https://simongrund1.github.io/publications/2016-sageopen/</link>
+      <pubDate>Mon, 21 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://simongrund1.github.io/publications/2016-sageopen/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Multiple imputation of missing covariate values in multilevel models with random slopes: A cautionary note</title>
+      <link>https://simongrund1.github.io/publications/2016-brm/</link>
+      <pubDate>Sun, 20 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://simongrund1.github.io/publications/2016-brm/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mitml</title>
+      <link>https://simongrund1.github.io/software/mitml/</link>
+      <pubDate>Tue, 01 May 2018 22:16:00 +0200</pubDate>
+      
+      <guid>https://simongrund1.github.io/software/mitml/</guid>
+      <description>This R package provides tools for multiple imputation of missing data in multilevel modeling. It includes a user-friendly interface to the packages pan and jomo, and several functions for visualization, data management, and the analysis of multiply imputed data sets.
+The purpose of mitml is to provide users with a set of effective and user-friendly tools for multiple imputation of multilevel data without requiring advanced knowledge of its statistical underpinnings.</description>
+    </item>
+    
+  </channel>
+</rss>

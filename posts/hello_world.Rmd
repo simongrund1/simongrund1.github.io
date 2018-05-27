@@ -1,0 +1,24 @@
+---
+title: 'Hello, World!'
+date: 2018-05-27
+tags: [ "news" ]
+draft: true
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+library(knitr)
+opts_chunk$set(background="#ffffff", comment="#", collapse=FALSE, #include=FALSE,
+               fig.width=10, fig.height=6, warning=FALSE, message=FALSE)
+options(width=86)
+set.seed(123)
+```
+
+This first post marks the launch of my website, with which I have been tinkering for some time now. From time to time, I will update the blog with new posts about topics related to quantitative psychology, statistical methods, R, Vim, and other things that interest me. So be sure to check back periodically!
+
+In addition, you can find information about my publications and software projects. Whenever possible, I will update this information, including full-text versions of my articles and links to published and manuscript versions.
+
+If you have any comments or suggestions for improvements for this website, you're welcome to drop me a line on Twitter or via [email](https://www.ipn.uni-kiel.de/en/the-ipn/departments/research-methodology/staff/grund-simon?set_language=en).
+
+## Credit
+
+This website was created with the help of several tools created and made openly available by many wonderful people. It uses [Hugo](https://gohugo.io/) and [blogdown](https://bookdown.org/yihui/blogdown/) for building and content organization. The theme is based on [Hyde](https://themes.gohugo.io/hyde/) with some alterations and redesigns inspired by the [gruvbox](https://github.com/morhetz/gruvbox) color scheme. Display of math symbols is powered by [MathJax](https://www.mathjax.org/), and icons by [Font Awesome](https://fontawesome.com/) and [Academicons](https://jpswalsh.github.io/academicons/).
