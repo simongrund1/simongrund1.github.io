@@ -82,14 +82,14 @@
  */
 
 html {
-  font-family: 'Source Sans Pro', serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-size: calc(0.45em + 0.5vw + 0.5vh);
 }
 body {
   color: #3c3836;
 }
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Source Serif Pro', sans-serif;
+  font-family: 'Source Serif Pro', serif;
   color: #504945;
   clear: left;
 }
@@ -104,7 +104,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Decorated links */
 
-a {
+a, a code {
   color: #458588;
 }
 
@@ -120,8 +120,33 @@ a:focus {
 /* Sections */
 
 .section {
-  margin-top: 2.25rem;
+  margin-top: 1.65rem;
 }
+.section h2 {
+  margin-top: 2.25rem;
+  margin-bottom: 1.80rem;
+}
+.section h3 {
+  margin-top: 1.80rem;
+  margin-bottom: 1.70rem;
+}
+.section h4 {
+  margin-bottom: 1.55rem;
+}
+/* pure markdown */
+div.post > h2 {
+  margin-top: 2.05rem;
+  margin-bottom: 1.85rem;
+}
+div.post > h3 {
+  margin-top: 1.80rem;
+  margin-bottom: 1.60rem;
+}
+div.post > h4 {
+  margin-top: 1.55rem;
+  margin-bottom: 1.35rem;
+}
+
 
 /* Dates */
 .post-date, .list-date, .summary-date {
@@ -173,6 +198,73 @@ a:focus {
   color: #928374;
 }
 
+div.post ul {
+  list-style: none;
+  padding: 0;
+}
+div.post ul:not(.bibliography) > li {
+  padding-left: 1.15em;
+}
+div.post ul:not(.bibliography) > li:before {
+  content: "‣";
+  color: #282828;
+  margin-left: -1.20em;
+  margin-right: 0.6em;
+}
+
+ol {
+  padding-left: 1rem;
+}
+
+ol > li {
+  margin-right: 2rem;
+}
+
+/* Bibliography */
+
+ul.bibliography li {
+  padding-bottom: 0.5rem;
+}
+
+/* Tables */
+
+table {
+  font-size: 0.9rem;
+  margin-top: 1.2rem;
+  margin-bottom: 1.2rem;
+  width: 100%;
+  border: 1px solid #e5e5e5;
+  border-collapse: collapse;
+}
+td, th {
+  padding: .25rem .5rem;
+  border: 1px solid #e5e5e5;
+}
+tr th {
+  font-weight: normal;
+  background-color: #f9f8f7;
+}
+tbody tr:nth-child(odd) td, tbody tr:nth-child(odd) th {
+  background-color: #fff;
+}
+
+
+/* Footnotes */
+
+a.footnote-ref {
+  font-size: 0.75rem;
+}
+
+a.footnote-back {
+  padding-left: 0.2rem;
+}
+
+/* Comments */
+
+div#disqus_thread {
+  margin-top: 1.6rem;
+}
+
 /* Summaries */
 
 img.thumbnail {
@@ -189,7 +281,6 @@ img.thumbnail {
     max-width: 200px;
   }
 }
-
 
 /*
  * Sidebar
@@ -374,18 +465,19 @@ ul.sidebar-nav li:nth-child(2n+8) {
  */
 
 pre, code {
-  font-family: 'Source Code Pro', monospace;
+  font-family: 'Inconsolata', monospace;
   background-color: #f9f8f7;
   border-radius: 3px;
 }
 code {
-  padding: .10em .25em;
+  padding: .10em .15em;
+  font-size: 0.95rem;
   color: #3c3836;
 }
 pre {
-  padding: 0ex 0ex 0ex 0.8ex;
-  font-size: 0.8rem;
-  line-height: 1.2;
+  padding: 0.4ex 0ex 0.4ex 0.6ex;
+  font-size: 0.82rem;
+  line-height: 1.20;
   white-space: pre;
   word-break: keep-all;
   word-wrap: normal;
