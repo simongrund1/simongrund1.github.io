@@ -6,10 +6,21 @@
     <description>Recent content on Simon Grund</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 27 May 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 25 Jun 2018 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="https://simongrund1.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Dealing with missing data in ANOVA models</title>
+      <link>https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets/</link>
+      <pubDate>Mon, 25 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets/</guid>
+      <description>The analysis of variance, or ANOVA, is among the most popular methods for analyzing how an outcome variable differs between groups, for example, in observational studies or in experiments with different conditions.
+But how do we conduct the ANOVA when there are missing data? In this post, I show how to deal with missing data in between- and within-subject designs using multiple imputation (MI) in R.
+The ANOVA model In the one-factorial ANOVA, the goal is to investigate whether two or more groups differ with respect to some outcome variable \(y\).</description>
+    </item>
     
     <item>
       <title>Hello, World!</title>

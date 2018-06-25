@@ -1,0 +1,408 @@
+---
+title: 'Dealing with missing data in ANOVA models'
+date: 2018-06-25
+tags: [ "missing data", "multiple imputation", "anova" ]
+thumbnail: "thumbnail-1.png"
+draft: false
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+library(knitr)
+library(ggplot2)
+
+opts_chunk$set(background="#ffffff", comment="#", collapse=FALSE, 
+               fig.width=10, fig.height=6, warning=FALSE, message=FALSE)
+options(width=86, digits=3)
+
+gruvy <- theme_gray(base_size=14) +
+         theme(panel.background=element_rect(fill="#f9f8f7", colour="#b5b5b5"),
+               panel.grid.major=element_line(colour="#e5e5e5"),
+               panel.grid.minor=element_line(colour="#e5e5e5"))
+
+set.seed(123)
+```
+
+The analysis of variance, or ANOVA, is among the most popular methods for analyzing how an outcome variable differs between groups, for example, in observational studies or in experiments with different conditions.
+
+But how do we conduct the ANOVA when there are missing data?
+In this post, I show how to deal with missing data in between- and within-subject designs using multiple imputation (MI) in [R](https://www.r-project.org/).
+
+## The ANOVA model
+
+In the one-factorial ANOVA, the goal is to investigate whether two or more groups differ with respect to some outcome variable $y$.
+The statistical model can be written as
+
+$$
+\begin{equation} \label{model}
+y_{ij} = \mu_j + e_{ij} \; ,
+\end{equation}
+$$
+
+where $y_{ij}$ denotes the value of $y$ for person $i$ in group $j$, and $\mu_j$ is the mean in group $j$.
+The (omnibus) null hypothesis of the ANOVA states that all groups have identical population means.
+For three groups, this would mean that
+
+$$
+\begin{equation}
+\mu_1 = \mu_2 = \mu_3 \; .
+\end{equation}
+$$
+
+This hypothesis is tested by looking at whether the differences between groups are larger than what could be expected from the differences within groups.
+If this is the case, then we reject the null, and the group means are said to be "significantly" different from one another.
+
+In the following, we will look at how this hypothesis can be tested when the outcome variable contains missing data.
+Let's illustrate this with an example.
+
+## Example 1: between-subjects ANOVA
+
+For this example, I simulated some data according to a between-subject design with three groups, $n$ = 50 subjects per group, and a "medium" effect size of $f$ = .25, which roughly corresponds to an $R^2=6.8\%$ [(Cohen, 1988)](#Cohen1988).
+
+You can download the data from this post if you want to reproduce the results ([CSV](/posts/anova-with-multiply-imputed-data-sets_files/example1.csv), [Rdata](/posts/anova-with-multiply-imputed-data-sets_files/example1.Rdata)). Here are the first few rows.
+
+```{r, echo=FALSE}
+n <- 50
+f <- .25
+p <- c(-1/2,1,-1/2)
+
+sigma2x <- 1
+sigma2y <- 1
+rhoxy <- .70
+
+pmd <- .20
+lambda <- .707
+
+k <- 3
+N <- n*k
+
+sigma2tau <- f^2/(1+f^2)
+sigma2eps <- 1 - sigma2tau
+d <- sqrt( N*sigma2tau / sum(n*p^2) )
+
+# simulation of data
+group <- factor( rep(1:k, times=n), labels=c("A","B","C"))
+y <- rnorm( N, mean=d*p, sd=sqrt(sigma2eps) )
+x <- rhoxy*y + rnorm( N, mean=0, sd=sqrt(sigma2x - rhoxy^2) )
+dat <- data.frame(group=group, y=y, x=x)
+
+# ... of MD
+rstar <- lambda*x + rnorm(N, mean=0, sd=sqrt(1-lambda^2))
+dat[ rstar<qnorm(pmd), "y" ] <- NA
+
+# save data
+#save(dat, file="example1.Rdata")
+#write.csv(dat, file="example1.csv")
+```
+
+```{r, echo=FALSE}
+kable(dat[1:5,], digits=3, align="r", row.names=TRUE)
+```
+
+The three variables mean the following:
+
+* `group`: the grouping variable
+* `y`: the outcome variable (with `r 100*round(mean(is.na(dat$y)),3)`% missing data)
+* `x`: an additional covariate
+
+In this example, cases with lower values in `x` had a higher chance of missing data in `y`.
+Because `x` is also positively correlated with `y`, this means that smaller `y` values are missing more often than larger ones.
+
+### Listwise deletion
+
+Lets see what happens if we run the ANOVA only with those cases that have `y` observed (i.e., listwise deletion). This is the standard setting on most statistical software.
+
+In R, the ANOVA can be conducted with the `lm()` function as follows.
+
+```{r}
+# fit the ANOVA model
+fit1 <- lm(y ~ 1 + group, data = dat)
+summary(fit1)
+```
+```{r, echo=FALSE}
+f <- summary(fit1)$fstatistic[1]
+k <- summary(fit1)$fstatistic[2]
+v <- summary(fit1)$fstatistic[3]
+```
+
+In this example, the $F$-test at the bottom of the output indicates that the group means are *not* significantly different from one another, $F(\!$ `r k`, `r v` $\!)$ = `r f` ($p$ = `r round(pf(f,k,v,lower=F),3)`).[^1] 
+In addition, the effect size ($R^2$ = `r summary(fit1)$r.squared`) is quite a bit smaller than what was used to generate the data.
+
+In fact, this result is a direct consequence of how the missing data were simulated.
+Fortunately, there are statistical methods that can account for the missing data and help us obtain more trustworthy results.
+
+### Multiple imputation
+
+One of the most effective ways of dealing with missing data is multiple imputation (MI).
+Using MI, we can create multiple plausible replacements of the missing data, given what we have observed and a statistical model (the imputation model).
+
+In the ANOVA, using MI has the additional benefit that it allows taking covariates into account that are relevant for the missing data but not for the analysis.
+In this example, `x` is a direct cause of missing data in `y`. Therefore, we must take `x` into account when making inferences about `y` in the ANOVA.
+
+Running MI consists of three steps. First, the missing data are imputed multiple times. Second, the imputed data sets are analyzed separately. Third, the parameter estimates and hypothesis tests are *pooled* to form a final set of estimates and inferences.
+
+For this example, we will use the [`mice`](https://cran.r-project.org/package=mice) and [`mitml`](https://cran.r-project.org/package=mitml) packages to conduct MI.
+
+```{r}
+library(mice)
+library(mitml)
+```
+
+Specifying an imputation model is very simple here. With the following command, we generate 100 imputations for `y` on the basis of a regression model with both `group` and `x` as predictors and a normal error term.
+
+```{r, cache=TRUE, results="hide"}
+# run MI
+imp <- mice(data = dat, method = "norm", m = 100)
+```
+
+The imputed data sets can then be saved as a list, containing 100 copies of the original data, in which the missing data have been replaced by different imputations.
+
+```{r}
+# create a list of completed data sets
+implist <- mids2mitml.list(imp)
+```
+
+Finally, we fit the ANOVA model to each of the imputed data sets and pool the results.
+The analysis part is done with the `with()` command, which applies the same linear model, `lm()`, to each data set.
+The pooling es then done with the `testEstimates()` function.
+
+```{r, cache=TRUE}
+# fit the ANOVA model
+fit2 <- with(implist, lm(y ~ 1 + group))
+
+# pool the parameter estimates
+testEstimates(fit2)
+```
+
+Notice that we did not need to actually include `x` in the ANOVA.
+Rather, it was enough to include `x` in the imputation model, after which the analyses proceeded as usual.
+
+We now have estimated the regression coefficients in the ANOVA model (i.e., the differences between group means), but we have yet to decide whether the means are all equal or not.
+To this end, we use a pooled version of the $F$-test above, which consists of a comparison of the full model (the ANOVA model) with a reduced model that does not contain the coefficients we wish to test.[^2]
+
+In this case, we wish to test the coefficients pertaining to the differences between groups, so the reduced model does not contain `group` as a predictor.
+
+```{r, cache=TRUE}
+# fit the reduced ANOVA model (without 'group')
+fit2.reduced <- with(implist, lm(y ~ 1))
+```
+
+The full and the reduced model can then be compared with the pooled version of the $F$-test (i.e., the Wald test), which is known in the literature as $D_1$.
+
+```{r, cache=TRUE}
+# compare the two models with pooled Wald test
+testModels(fit2, fit2.reduced, method = "D1")
+```
+
+In contrast with listwise deletion, the $F$-test under MI indicates that the groups *are* significantly different from one another.
+
+This is because MI makes use of all the observed data, including the covariate `x`, and used this information to generated replacements for missing `y` that took its relation with `x` into account.
+To see this, it is worth looking at a comparison of the observed and the imputed data.
+
+```{r thumbnail, echo=FALSE, fig.width=7.2, fig.height=4}
+ld <- data.frame(dat, imp=0)
+mi <- data.frame(implist[[1]], imp=1)
+dat1 <- na.omit(rbind(ld, mi))
+dat1$imp <- factor(dat1$imp, levels=c(0,1), labels=c("listwise","MI (#1)"))
+
+cols <- c("#458588", "#8f2f71")
+names(cols) <- levels(dat1$imp)
+
+plt <- ggplot(dat1, aes(group, y, color=imp)) +
+       geom_violin(scale="count") +
+       geom_jitter(height=0, width=0.1) +
+       scale_colour_manual(values=cols, labels=levels(dat1$imp), name=NULL) +
+       scale_y_continuous(labels=function(x) sprintf("%.1f", x), name="y") +
+       gruvy
+plt
+```
+
+The difference is not extreme, but it is easy to see that the imputed data tend to have more mass at the lower end of the distribution of `y` (especially in groups A and C).
+
+This is again a result of how the data were simulated: Lower `y` values, through their relation with `x`, are missing more often, which is accounted for using MI.
+Conversely, using listwise deletion placed the group means more closely together than they should be, and this affected the results in the ANOVA.
+
+## Example 2: mixed/within-subjects ANOVA
+
+In a within-subjects design, the design factor varies within (not between) persons, and we obtain multiple, repeated measurements for each condition (mixed designs include both).
+Fortunately, the procedure for the treatment and missing data and the analysis remains mostly the same.
+
+Although within-subjects designs are analyzed most often with the repeated-measures ANOVA, mixed-effects models have become a popular alternative. Here, I will choose the latter because mixed-effects models make it straightforward to pool ANOVA-like hypotheses in within-subjects designs.
+
+To fit the mixed-effects model, we will use the `lmer()` function from the package [`lme4`](https://cran.r-project.org/package=lme4).
+
+```{r}
+library(lme4)
+```
+
+I simulated a second data set similar to the one above, with $n$ = 20 persons, a within-subject factor with three conditions, and five repeated measurements for each condition ([CSV](/posts/anova-with-multiply-imputed-data-sets_files/example2.csv), [Rdata](/posts/anova-with-multiply-imputed-data-sets_files/example2.Rdata)).
+
+```{r, echo=FALSE}
+n <- 20
+m <- 5
+f <- .25
+p <- c(-1/2,1,-1/2)
+
+sigma2x <- 1
+sigma2y <- 1
+rhoxy <- .70
+
+pmd <- .20
+lambda <- .707
+
+k <- 3
+N <- n*k*m
+
+sigma2psi <- 1
+bxy <- rhoxy*sqrt(sigma2x/sigma2psi)
+
+sigma2tau <- f^2/(1+f^2)
+sigma2eps <- 1 - sigma2tau
+d <- sqrt( m*k*sigma2tau / sum(m*p^2) )
+
+# simulation of data
+id <- rep(1:n, each=k*m)
+group <- factor( rep(1:k, times=n*m), labels=c("A","B","C"))
+u <- rnorm( n, mean=0, sd=sqrt(sigma2psi))
+v <- bxy*u + rnorm( n, mean=0, sd=sqrt(sigma2x - bxy^2*sigma2psi) )
+e <- rnorm( N, mean=d*p, sd=sqrt(sigma2eps) )
+y <- (u[id] + e) / sqrt(1 + sigma2psi)
+dat <- data.frame(id=id, cond=group, y=y, x=v[id])
+
+# ... of MD
+rstar <- lambda*x + rnorm(N, mean=0, sd=sqrt(1-lambda^2))
+dat[ rstar<qnorm(pmd), "y" ] <- NA
+
+# save data
+#save(dat, file="example2.Rdata")
+#write.csv(dat, file="example2.csv")
+```
+
+```{r, echo=FALSE}
+kable(dat[1:5,], digits=3, align="r", row.names=TRUE)
+```
+
+The variables mean the following:
+
+* `id`: the subject identifier
+* `cond`: the grouping variable (within subjects)
+* `y`: the repeated measurements for the outcome variable (with `r 100*round(mean(is.na(dat$y)),3)`% missing data)
+* `x`: a subject-specific covariate
+
+Like above, persons with lower values in `x` had a higher chance of missing data in `y`. Notice that `cond` varies within subjects, making the repeated measures for each condition "nested" within subjects.
+
+### Multiple imputation
+
+To properly accommodate the "nested" structure of the repeated measurements, the imputation model can no longer be a simple regression.
+Instead, it needs to accommodate this structure by also employing a mixed-effects model.
+Specifying this model is easiest by first initializing the imputation model with the default values.
+
+```{r, results="hide"}
+# run MI (for starting solution)
+ini <- mice(data = dat, maxit = 0)
+```
+
+Then we define the subject identifier for the imputation model (`id`) and change the imputation method to a use a mixed-effects model (`"2l.pan"`).
+Running MI is then the same as before.
+
+```{r, cache=TRUE, results="hide"}
+# define the 'subject' identifier (code as '-2' in predictor matrix)
+pred <- ini$pred
+pred["y", "id"] <- -2
+
+# run MI
+imp <- mice(data = dat, pred = pred, method = "2l.pan", m = 100)
+summary(imp)
+```
+
+The list of imputed data sets is generated as above.
+
+```{r}
+# create a list of completed data sets
+implist <- mids2mitml.list(imp)
+```
+
+The ANOVA model is then fit using `lmer()`.
+Notice that this model contains an additional term, `(1|id)`, which specifies a random effect for each subject.
+This effect captures unsystematic differences between subjects, thus accounting for the nested structure of the repeated-measures data.
+
+```{r, cache=TRUE}
+# fit the ANOVA model
+fit3 <- with(implist, lmer(y ~ 1 + cond + (1|id)))
+testEstimates(fit3, var.comp = TRUE)
+```
+
+The output is similar to before, with the regression coefficients denoting the differences between the conditions. In addition, the output includes the variance of the random effect that denotes the unsystematic differences between subjects.
+
+Testing the null hypothesis of the ANOVA again requires the specification of a reduced model that does not contain the parameters to be tested (i.e., those pertaining to `cond`).
+
+```{r, cache=TRUE}
+# pool the parameter estimates
+fit3.reduced <- with(implist, lmer(y ~ 1 + (1|id)))
+testModels(fit3, fit3.reduced, method = "D1")
+```
+
+As in the first example, the three conditions are significantly different from one another.
+
+These two examples were obviously very simple.
+However, the same general procedure can be used for more complex ANOVA models, including models with two or more factors, interaction effects, or for mixed designs with both between- and within-subject factors.
+
+## Procedures other than MI
+
+Imputation is not the only method that can deal with missing data, and other methods like maximum-likelihood estimation (ML) have also been recommended ([Schafer & Graham, 2002](#Schafer2002)).
+Using ML, cases contribute to the estimation of the model only to the extent to which they have data, and its results are often equally trustworthy as those under MI.
+
+However, in the ANOVA, this should be taken with a grain of salt.
+For missing data in the outcome variable `y`, using ML simply means that the model is estimated using only the cases with observed `y` (i.e., listwise deletion), which can lead to distorted parameter estimates if other variables are related to the chance of observing `y` (see Example 1).
+In order to account for this, ML requires including these extra variables in the analysis model, which changes the meaning of the parameters (i.e., the ANOVA becomes ANCOVA, though the estimates for it *would* be unbiased!).
+
+One key advantage of MI is that the treatment of missing data is independent of the analysis.
+Variables relevant for the treatment of missing data can be included in the imputation model without altering the analysis model.
+
+## Further reading
+
+To read more about ANOVA models and the treatment of missing data therein, you can check the following resources:
+
+* [Maxwell, Delaney, and Kelley (2018)](#Maxwell2018) give a great introduction into the design and analysis of experimental data with the ANOVA and mixed-effects models
+* [van Ginkel and Kroonenberg (2014)](#vanGinkel2014) provide a detailed discussion of missing data and MI in the ANOVA with examples, syntax files, and a macro for SPSS
+* [Grund, Lüdtke, and Robitzsch (2016)](#Grund2016) provide a comparison of different methods for testing hypotheses in the ANOVA under MI
+* [Liu and Enders (2017)](#Liu2017) provide a similar comparison in the context of regression analyses
+
+## References {#bib}
+
+<ul class="bibliography">
+  <li id="Cohen1988">Cohen, J. (1988). <i>Statistical power analysis for the behavioral sciences</i> (2nd ed.). Hillsdale, NJ: Erlbaum.</li>
+  <li id="Grund2016">Grund, S., Lüdtke, O., &amp; Robitzsch, A. (2016). Pooling ANOVA results from multiply imputed datasets: A simulation study. <i>Methodology</i>, <i>12</i>, 75–88. <a href="https://doi.org/10.1027/1614-2241/a000111">doi:10.1027/1614-2241/a000111</a></li>
+  <li id="Liu2017">Liu, Y., &amp; Enders, C. K. (2017). Evaluation of multi-parameter test statistics for multiple imputation. <i>Multivariate Behavioral Research</i>, <i>52</i>, 371–390. <a href="https://doi.org/10.1080/00273171.2017.1298432">doi:10.1080/00273171.2017.1298432</a></li>
+   <li id="Maxwell2018">Maxwell, S. E., Delaney, H. D., &amp; Kelley, K. (2018). <i>Designing experiments and analyzing data: A model comparison perspective</i> (3rd ed.). Mahwah, NJ: Erlbaum.</li>
+  <li id="Schafer2002">Schafer, J. L., &amp; Graham, J. W. (2002). Missing data: Our view of the state of the art. <i>Psychological Methods</i>, <i>7</i>, 147–177. <a href="https://doi.org/10.1037//1082-989X.7.2.147">doi:10.1037//1082-989X.7.2.147</a></li>
+  <li id="vanGinkel2014">van Ginkel, J. R., &amp; Kroonenberg, P. M. (2014). Analysis of variance of multiply imputed data. <i>Multivariate Behavioral Research</i>, <i>49</i>, 78–91. <a href="https://doi.org/10.1080/00273171.2013.855890">doi:10.1080/00273171.2013.855890</a></li>
+</ul>
+
+[^1]: The hypothesis test in ANOVA is a Wald test that simultaneously tests all the differences between groups against zero. In this example, these differences are represented by the regression coefficients for `groupB` and `groupC`.
+
+      This can easily be verified by calculating the Wald test by hand:
+
+      ```{r}
+      # estimates and covariance matrix
+      b <- coef(fit1)[-1]
+      V <- vcov(fit1)[-1,-1]
+      
+      # Wald-test
+      F <- b %*% solve(V) %*% b / 2      # F statistic
+      pf(F, 2, 116, lower.tail = FALSE)  # p value
+      ```
+
+      The resulting $F$ and $p$ value are exactly the same as in the output above.
+
+[^2]: Technically, a reduced model is not necessary (only convenient). The Wald test can be formulated equivalently with a linear constraint on the parameters of the full model (i.e., setting them to zero).
+
+      Under MI, this can be done, too, with the `testConstraints()` function:
+
+      ```{r}
+      # define and test parameter constraints
+      con <- c("groupB", "groupC")
+      testConstraints(fit2, constraints = con, method = "D1")
+      ```
+
+      The results of this are identical to those of `testModels()`.
+
