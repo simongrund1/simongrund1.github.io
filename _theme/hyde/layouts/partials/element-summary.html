@@ -1,0 +1,8 @@
+ <!--Custom summary: print description if given; else, print truncated summary-->
+ {{ with .Description }}
+   {{ $.Scratch.Set "summary" (markdownify .) }}
+ {{ else }}
+   {{ $.Scratch.Set "summary" ((delimit (findRE "(<p.*?>(.|\n)*?</p>\\s*)+" .Content) "[&hellip;] ") | plainify | truncate .Site.Params.summaryLength "" | replaceRE "&amp;" "&" | safeHTML) }}
+ {{ end }}
+ {{ $.Scratch.Get "summary" }}
+ {{ if not (isset .Params "description") }}<a href="{{ .RelPermalink }}">&hellip; [more]</a>{{ end }}

@@ -1,0 +1,6 @@
+<div class="posts-list">
+{{ range (where .Data.Pages "Section" "software").ByDate }}
+  {{ partial "element-software.html" . }}
+{{- end }}
+</div>
+

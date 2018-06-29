@@ -1,0 +1,49 @@
+<div class="sidebar">
+
+  <div id="sidebar-main" class="container sidebar-sticky hidden">
+
+    <div class="sidebar-about">
+      <a href="{{ .Site.BaseURL }}"><h1>{{ .Site.Title }}</h1></a>
+    </div>
+
+    <p class="sidebar-orcid">
+      <i class="ai ai-orcid" style="color:#fff"></i>
+      <a href="https://orcid.org/0000-0002-1290-8986">0000-0002-1290-8986</a>
+    </p>
+
+    {{ .Site.Params.description }}
+
+    <ul class="sidebar-nav">
+      <li><a href="{{ .Site.BaseURL }}">Home</a> </li>
+      {{ range .Site.Menus.main -}}
+        <li><a href="{{ .URL }}"> {{ .Name }} </a></li>
+      {{- end }}
+    </ul>
+
+    <div class="sidebar-links">
+      <a href="https://twitter.com/simongrund89">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a href="https://github.com/simongrund1">
+        <i class="fab fa-github"></i>
+      </a>
+      <a href="https://www.researchgate.net/profile/Simon_Grund">
+        <i class="ai ai-researchgate"></i>
+      </a>
+      <a href="https://scholar.google.de/citations?user=RkmNDJgAAAAJ">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <p>Based on Hyde theme for Hugo</p>
+      <p>&copy; {{ now.Format "2006"}} / All rights reserved</p>
+    </div>
+
+  </div>
+
+  <div id="sidebar-switch" onclick="toggleNavbar()">
+    <i id="sidebar-switch-icon" class="fas fa-chevron-down"></i>
+  </div>
+
+</div>

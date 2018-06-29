@@ -1,0 +1,8 @@
+<div class="software">
+  <i class="fas fa-laptop fa-pull-left software-symbol"></i>
+  <a href="{{ .Permalink }}">{{ .Title }}</a>:
+  {{ .Params.subtitle }}
+  {{ if isset .Params "cran" }} <a href="{{ .Params.cran }}"> [CRAN]</a>{{ end }}
+  {{ if isset .Params "github" }} <a href="{{ .Params.github }}"> [Github]</a>{{ end }}
+</div>
+

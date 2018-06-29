@@ -1,0 +1,7 @@
+<div class="posts-list">
+{{ range first 3 (where .Data.Pages "Section" "publications").ByDate.Reverse }}
+  {{ partial (print "element-publication-" .Params.pubtype ".html") . }}
+{{- end }}
+<a href="/publications">&hellip; &thinsp;[see all]</a>
+</div>
+

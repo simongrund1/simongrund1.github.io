@@ -1,0 +1,24 @@
+<div class="posts">
+{{ range last 5 (where .Data.Pages "Section" "posts").ByDate.Reverse }}
+  <div class="post">
+
+    <h2 class="post-title">
+      <a href="{{ .Permalink }}">{{ .Title }}</a>
+    </h2>
+    <span class="summary-date">{{ .Date.Format "January 2, 2006" }}</span>
+
+    {{ if isset .Params "thumbnail" }} <img src="/posts/{{ .File.BaseFileName }}_files/figure-html/{{ .Params.thumbnail }}" alt="thumbnail image" class="thumbnail"> {{ end }}
+
+    {{ partial "element-summary.html" . }}
+
+    {{ if .Params.tags }}
+      <p class="post-tags">
+      tags: {{ range $index, $tag := .Params.tags }}
+        <a href="{{ "tags/" | relURL }}{{ . | urlize }}">[{{ . }}]</a>
+      {{- end -}}
+      </p>
+    {{ end }}
+
+  </div>
+{{- end }}
+</div>

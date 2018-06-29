@@ -1,0 +1,18 @@
+<div class="posts">
+
+{{ range first 3 (where .Data.Pages "Section" "publications").ByDate }}
+  <div class="post">
+
+    <h2 class="post-title">
+      <a href="{{ .Permalink }}">{{ .Title }}</a>
+    </h2>
+    <span class="summary-date">{{ .Date.Format "January 2, 2006" }}</span>
+
+    {{ if isset .Params "thumbnail" }} <img src="/publications/{{ .File.BaseFileName }}_files/figure-html/{{ .Params.thumbnail }}" alt="thumbnail image" class="thumbnail"> {{ end }}
+
+    {{ partial "element-summary.html" . }}
+
+  </div>
+{{- end }}
+
+</div>

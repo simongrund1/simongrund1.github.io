@@ -1,0 +1,31 @@
+{{ define "main" -}}
+
+<h1>Welcome!</h1>
+
+<div class="post">
+<p>
+  I'm a researcher at the Leibniz Institute for Science and Mathematics
+  Education in Kiel, Germany, focusing on quantitative methods in psychology and
+  education. My research interests include missing data, multilevel modeling,
+  and causal inference.
+</p>
+<p>
+  Below, you can find information about my recent work, including the most
+  recent posts from my blog and about publications and software. For more,
+  please visit the respective sections using the menu.
+</p>
+</div>
+
+<h1 class="post-title"><a href="/posts">Recent Posts - Blog</a></h1>
+
+{{ partial "summary-posts.html" . }}
+
+<h1 class="post-title"><a href="/publications">Recent Publications</a></h1>
+
+{{ partial "list-publications.html" . }}
+
+<h1 class="post-title"><a href="/software">Software</a></h1>
+
+{{ partial "list-software.html" . }}
+
+{{- end }}

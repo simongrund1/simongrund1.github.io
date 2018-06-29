@@ -1,0 +1,16 @@
+<div class="posts-list">
+
+<h3>Articles</h3>
+
+{{ range (where (where .Data.Pages "Section" "publications") ".Params.pubtype" "article").ByDate.Reverse }}
+  {{ partial "element-publication-article.html" . }}
+{{- end }}
+
+<h3>Book chapters</h3>
+
+{{ range (where (where .Data.Pages "Section" "publications") ".Params.pubtype" "chapter").ByDate.Reverse }}
+  {{ partial "element-publication-chapter.html" . }}
+{{- end }}
+
+</div>
+
