@@ -1,0 +1,833 @@
+---
+title: "Multiple imputation for three-level and cross-classified data"
+date: 2019-01-03
+tags: [ "r", "missing data", "multiple imputation", "multilevel" ]
+thumbnail: "thumbnail-1.png"
+draft: false
+---
+
+```{r setup, include=FALSE, cache=FALSE}
+library(knitr)
+library(ggplot2)
+library(grid)
+
+opts_chunk$set(background="#ffffff", comment="#", collapse=FALSE, 
+               fig.width=10, fig.height=6, warning=FALSE, message=FALSE)
+options(width=86, digits=3)
+
+gruvy <- theme_gray(base_size=14) +
+         theme(panel.background=element_rect(fill="#f9f8f7", colour="#b5b5b5"),
+               panel.grid.major=element_line(colour="#e5e5e5"),
+               panel.grid.minor=element_line(colour="#e5e5e5"))
+
+set.seed(852)
+```
+
+Multiple imputation (MI) of missing values in hierarchical data can be tricky when the data do not have a simple two-level structure.
+In such a case, understanding and accounting for the hierarchical structure of the data can be challenging, and tools to handle these types of data are relatively rare.
+
+In this post, I show and explain how to conduct MI for three-level and cross-classified data in [R](https://www.r-project.org/).
+
+## Types of hierarchical data
+
+Hierarchical data have a clustered structure in the sense that observations are clustered in higher-level units (e.g., observations in persons, persons in groups).
+Here, I consider two types of this: nested and cross-classified data.
+
+### Nested data
+
+In nested data, every observation belongs to one and only one higher-level unit.
+Two-level data are a simple example for this type data, as shown below for three clusters with $n$ observations.
+
+```{r, fig.width=4.8, fig.height=0.8, dev.args=list(pointsize=10), echo=FALSE}
+grid.newpage()
+pushViewport(viewport(width=unit(1,"npc"), height=unit(1,"npc")))
+
+y1 <- unit(0, "npc") + unit(1,"lines")
+y2 <- unit(1, "npc") - unit(1,"lines")
+
+h <- w <- stringWidth("M") + unit(2,"mm")
+
+k <- 6
+hs <- .050
+mar <- .075
+
+iseq <- seq(0+mar, 1-mar, by=(1-2*mar)/(k-1))
+
+for(i in seq_along(iseq)){
+
+# draw clusters
+  lab1 <- as.expression(bquote(italic(C)[.(i)]))
+  Cn <- paste0("C",i)
+
+  grid.rect(x=iseq[i], y=y2, width=w, height=h, name=Cn, gp=gpar(col=0))
+  grid.text(x=iseq[i], y=y2, lab1)
+
+  # draw units
+  lab2 <- as.expression(bquote(italic(p)[1*.(i)]))
+  lab3 <- as.expression(bquote(italic(p)[italic(n)*.(i)]))
+  p1n <- paste0("p1",i)
+  p2n <- paste0("p2",i)
+  p3n <- paste0("p3",i)
+
+  grid.rect(x=iseq[i]-hs, y=y1, width=w, height=h, name=p1n, gp=gpar(col=0))
+  grid.text(x=iseq[i]-hs, y=y1, lab2)
+  grid.rect(x=iseq[i], y=y1, width=w, height=h, name=p2n, gp=gpar(col=0))
+  grid.text(x=iseq[i], y=y1, bquote(italic(...)))
+  grid.rect(x=iseq[i]+hs, y=y1, width=w, height=h, name=p3n, gp=gpar(col=0))
+  grid.text(x=iseq[i]+hs, y=y1, lab3)
+
+  # draw arrows ... arrow=arrow(length=unit(3,"mm"), angle=15, type="closed"), gp=gpar(fill="black")
+  grid.segments(grobX(Cn,250), grobY(Cn,250), grobX(p1n,90), grobY(p1n,90))
+  grid.segments(grobX(Cn,270), grobY(Cn,270), grobX(p2n,90), grobY(p2n,90))
+  grid.segments(grobX(Cn,290), grobY(Cn,290), grobX(p3n,90), grobY(p3n,90))
+}
+
+upViewport()
+```
+
+More deeply nested structures are possible.
+For example, in three-level data, the clusters themselves are nested in even-higher-level units (e.g., students nested in classrooms nested in schools).
+
+```{r thumbnail, fig.width=4.8, fig.height=1.3, dev.args=list(pointsize=10), echo=FALSE}
+grid.newpage()
+pushViewport(viewport(width=unit(1,"npc"), height=unit(1,"npc")))
+
+y1 <- unit(0, "npc") + unit(1,"lines")
+y2 <- unit(.5, "npc")
+y3 <- unit(1, "npc") - unit(1,"lines")
+
+h <- w <- stringWidth("M") + unit(2,"mm")
+
+k <- 6
+hs <- .050
+mar <- .075
+
+iseq <- seq(0+mar, 1-mar, by=(1-2*mar)/(k-1))
+#higher <- list(1:3, 4:6)
+higher <- list(1:2, 3:4, 5:6)
+
+for(i in seq_along(iseq)){
+
+  # draw clusters
+  lab1 <- as.expression(bquote(italic(C)[.(i)]))
+  Cn <- paste0("C",i)
+
+  grid.rect(x=iseq[i], y=y2, width=w, height=h, name=Cn, gp=gpar(col=0))
+  grid.text(x=iseq[i], y=y2, lab1)
+
+  # draw units
+  lab2 <- as.expression(bquote(italic(p)[1*.(i)]))
+  lab3 <- as.expression(bquote(italic(p)[italic(n)*.(i)]))
+  p1n <- paste0("p1",i)
+  p2n <- paste0("p2",i)
+  p3n <- paste0("p3",i)
+
+  grid.rect(x=iseq[i]-hs, y=y1, width=w, height=h, name=p1n, gp=gpar(col=0))
+  grid.text(x=iseq[i]-hs, y=y1, lab2)
+  grid.rect(x=iseq[i], y=y1, width=w, height=h, name=p2n, gp=gpar(col=0))
+  grid.text(x=iseq[i], y=y1, bquote(italic(...)))
+  grid.rect(x=iseq[i]+hs, y=y1, width=w, height=h, name=p3n, gp=gpar(col=0))
+  grid.text(x=iseq[i]+hs, y=y1, lab3)
+
+  # draw arrows ... arrow=arrow(length=unit(3,"mm"), angle=15, type="closed"), gp=gpar(fill="black")
+  grid.segments(grobX(Cn,250), grobY(Cn,250), grobX(p1n,90), grobY(p1n,90)) 
+  grid.segments(grobX(Cn,270), grobY(Cn,270), grobX(p2n,90), grobY(p2n,90))
+  grid.segments(grobX(Cn,290), grobY(Cn,290), grobX(p3n,90), grobY(p3n,90))
+
+}
+
+# draw higher-level clusters
+for(j in seq_along(higher)){
+
+  lab4 <- as.expression(bquote(italic(D)[.(j)]))
+  Dn <- paste0("D",j)
+  grid.rect(x=mean(iseq[higher[[j]]]), y=y3, width=w, height=h, name=Dn, gp=gpar(col=0))
+  grid.text(x=mean(iseq[higher[[j]]]), y=y3, lab4)
+
+  # draw arrows
+  for(j1 in higher[[j]]){
+    Cj <- paste0("C", j1)
+    deg <- 270 + (j1- mean(higher[[j]])) * 50
+    grid.segments(grobX(Dn,deg), grobY(Dn,deg), grobX(Cj,90), grobY(Cj,90)) 
+  }
+
+}
+
+upViewport()
+```
+
+Here, observations $p$ are nested within clusters $C$, and clusters are nested within higher-level clusters $D$.
+
+### Cross-classified data
+
+In cross-classified data, every observation belongs directly to two or more clusters at once (e.g., experimental data with observations clustered within subjects *and* stimuli).
+However, the clusters are not themselves nested within one another but "crossed" as shown below.
+
+```{r, fig.width=4.8, fig.height=1.3, dev.args=list(pointsize=10), echo=FALSE}
+grid.newpage()
+pushViewport(viewport(width=unit(1,"npc"), height=unit(1,"npc")))
+
+y1 <- unit(.5, "npc")
+y2 <- unit(1, "npc") - unit(1,"lines")
+y3 <- unit(0, "npc") + unit(1,"lines")
+
+h <- w <- stringWidth("M") + unit(2,"mm")
+
+k <- 6
+hs <- .050
+mar <- .075
+
+iseq <- seq(0+mar, 1-mar, by=(1-2*mar)/(k-1))
+
+for(i in seq_along(iseq)){
+
+  # draw clusters
+  lab1 <- as.expression(bquote(italic(A)[.(i)]))
+  An <- paste0("A",i)
+
+  grid.rect(x=iseq[i], y=y2, width=w, height=h, name=An, gp=gpar(col=0))
+  grid.text(x=iseq[i], y=y2, lab1)
+
+  # draw units
+  lab2 <- as.expression(bquote(italic(p)[1*.(i)]))
+  lab3 <- as.expression(bquote(italic(p)[italic(n)*.(i)]))
+  p1n <- paste0("p1",i)
+  p2n <- paste0("p2",i)
+  p3n <- paste0("p3",i)
+
+  grid.rect(x=iseq[i]-hs, y=y1, width=w, height=h, name=p1n, gp=gpar(col=0))
+  grid.text(x=iseq[i]-hs, y=y1, lab2)
+  grid.rect(x=iseq[i], y=y1, width=w, height=h, name=p2n, gp=gpar(col=0))
+  grid.text(x=iseq[i], y=y1, bquote(italic(...)))
+  grid.rect(x=iseq[i]+hs, y=y1, width=w, height=h, name=p3n, gp=gpar(col=0))
+  grid.text(x=iseq[i]+hs, y=y1, lab3)
+
+  # draw arrows ... arrow=arrow(length=unit(3,"mm"), angle=15, type="closed"), gp=gpar(fill="black")
+  grid.segments(grobX(An,250), grobY(An,250), grobX(p1n,90), grobY(p1n,90)) 
+  grid.segments(grobX(An,270), grobY(An,270), grobX(p2n,90), grobY(p2n,90))
+  grid.segments(grobX(An,290), grobY(An,290), grobX(p3n,90), grobY(p3n,90))
+
+}
+
+# draw crossed clusters
+lab4 <- as.expression(bquote(italic(B)[1]))
+lab5 <- as.expression(bquote(italic(B)[2]))
+B1n <- "B1"
+B2n <- "B2"
+grid.rect(x=1/3, y=y3, width=w, height=h, name=B1n, gp=gpar(col=0))
+grid.text(x=1/3, y=y3, lab4)
+grid.rect(x=1-1/3, y=y3, width=w, height=h, name=B2n, gp=gpar(col=0))
+grid.text(x=1-1/3, y=y3, lab5)
+
+# draw arrows
+for(i in seq_along(iseq)){
+  p1n <- paste0("p1",i)
+  p3n <- paste0("p3",i)
+  deg <- 90 - (i - mean(seq_along(iseq))) * 20
+  grid.segments(grobX(B1n,deg-10), grobY(B1n,deg), grobX(p1n,270), grobY(p1n,270)) 
+  grid.segments(grobX(B2n,deg+10), grobY(B2n,deg), grobX(p3n,270), grobY(p3n,270))
+}
+
+upViewport()
+```
+
+In contrast to nested data, there is no clear hierarchy of the two cluster variables.
+Differently put, although both $A$ and $B$ have observations clustered within them, neither of the two is itself nested within the other.
+
+### Why bother?
+
+For the treatment of missing data, the hierarchical structure must be taken into account when using model-based methods such as MI ([Enders, Mistler, & Keller, 2016](#Enders2016); [Lüdtke, Robitzsch, & Grund, 2017](#Ludtke2017)).
+This means that we need to acknowledge that, in hierarchical data, variables can vary both within and between clusters, and multiple variables can be related at each level of the structure.
+
+Several articles have considered the case with two-level data (e.g., the two above).
+In the following, I show two examples for how to conduct MI for three-level and cross-classified data in R.
+
+
+## Three-level data
+
+Suppose we have data from students (level 1) nested in classrooms (level 2) nested in schools (level 3) on four variables $x$, $y$, $z$, and $w$, where $x$ and $y$ are measured at level 1, $z$ at level 2, and $w$ at level 3.
+Consider the following model.
+For student $i$, classroom $j$, and school $k$,
+
+$$
+y_{ijk} = \beta_0 + \beta_1 x_{ijk} + \beta_2 \bar{x}_{\bullet jk} + \beta_3 z_{jk} + \beta_4 \bar{x}_{\bullet \bullet k} + \beta_5 \bar{z}_{\bullet k} + \beta_6 w_k
+ + u_{jk} + v_k + e_{ijk} \; ,
+$$
+
+where $\bar{x}_{\bullet jk}$ and $\bar{x}_{\bullet \bullet k}$ are the classroom and school mean of $x$, $\bar{z}_{\bullet k}$ is the school mean of $z$, and $u_{jk}$ and $v_k$ are random intercepts at the classroom and school level, respectively.
+A graphical representation of the model is as follows.
+
+```{r, fig.width=5.6, fig.height=2.2, dev.args=list(pointsize=10), echo=FALSE}
+grid.newpage()
+pushViewport(viewport(width=unit(1,"npc"), height=unit(1,"npc")))
+
+h <- w <- stringWidth("MM") + unit(2,"mm")
+arr <- arrow(length=unit(1.2,"mm"), type="closed")
+
+# x, z, w
+grid.rect(x=.444, y=.085, width=w, height=h, name="x1", gp=gpar(col=0))
+grid.text(x=.444, y=.085, bquote(italic(x[ijk])))
+
+grid.rect(x=.444, y=.255, width=w, height=h, name="x2", gp=gpar(col=0))
+grid.text(x=.444, y=.255, bquote(italic(bar(x)["\u2022"*jk])))
+grid.rect(x=.444, y=.425, width=w, height=h, name="z2", gp=gpar(col=0))
+grid.text(x=.444, y=.425, bquote(italic(z[jk])))
+grid.rect(x=.444, y=.595, width=w, height=h, name="x3", gp=gpar(col=0))
+grid.text(x=.444, y=.595, bquote(italic(bar(x)["\u2022"*"\u2022"*k])))
+grid.rect(x=.444, y=.765, width=w, height=h, name="z3", gp=gpar(col=0))
+grid.text(x=.444, y=.765, bquote(italic(bar(z)["\u2022"*k])))
+grid.rect(x=.444, y=.935, width=w, height=h, name="w", gp=gpar(col=0))
+grid.text(x=.444, y=.935, bquote(italic(w[k])))
+
+# y
+grid.rect(x=.666, y=.085, width=w, height=h, name="y1", gp=gpar(col=0))
+grid.text(x=.666, y=.085, bquote(italic(y[ijk]^{L1})))
+
+grid.rect(x=.666, y=.255, width=w, height=h, name="y2", gp=gpar(col=0))
+grid.text(x=.666, y=.255, bquote(italic(y[jk]^{L2})))
+
+grid.rect(x=.666, y=.595, width=w, height=h, name="y3", gp=gpar(col=0))
+grid.text(x=.666, y=.595, bquote(italic(y[k]^{L3})))
+
+# residuals
+grid.rect(x=.666+.080, y=.085+.110, width=w, height=h, name="e", gp=gpar(col=0))
+grid.text(x=.666+.080, y=.085+.110, bquote(italic(e[ijk])))
+
+grid.rect(x=.666+.080, y=.255+.110, width=w, height=h, name="u", gp=gpar(col=0))
+grid.text(x=.666+.080, y=.255+.110, bquote(italic(u[jk])))
+
+grid.rect(x=.666+.080, y=.595+.110, width=w, height=h, name="v", gp=gpar(col=0))
+grid.text(x=.666+.080, y=.595+.110, bquote(italic(v[k])))
+
+# arrows
+grid.segments(grobX("x1",0), grobY("x1",0), grobX("y1",180), grobY("y1",180),
+              arrow=arr, gp=gpar(fill="black")) 
+grid.segments(grobX("x2",0), grobY("x2",0), grobX("y2",180), grobY("y2",180),
+              arrow=arr, gp=gpar(fill="black")) 
+grid.segments(grobX("z2",0), grobY("z2",0), grobX("y2",150), grobY("y2",150),
+              arrow=arr, gp=gpar(fill="black")) 
+grid.segments(grobX("x3",0), grobY("x3",0), grobX("y3",180), grobY("y3",180),
+              arrow=arr, gp=gpar(fill="black")) 
+grid.segments(grobX("z3",0), grobY("z3",0), grobX("y3",160), grobY("y3",160),
+              arrow=arr, gp=gpar(fill="black")) 
+grid.segments(grobX("w",0), grobY("w",0), grobX("y3",145), grobY("y3",145),
+              arrow=arr, gp=gpar(fill="black")) 
+
+grid.segments(grobX("e",235), grobY("e",195), grobX("y1",45), grobY("y1",20),
+              arrow=arr, gp=gpar(fill="black")) 
+grid.segments(grobX("u",235), grobY("u",195), grobX("y2",45), grobY("y2",20),
+              arrow=arr, gp=gpar(fill="black")) 
+grid.segments(grobX("v",235), grobY("v",195), grobX("y3",45), grobY("y3",20),
+              arrow=arr, gp=gpar(fill="black")) 
+
+# labels
+grid.text(x=.555, y=.085+.042, bquote(italic("\u03b2")[1]), gp=gpar(cex=0.8))
+grid.text(x=.555, y=.255+.042, bquote(italic("\u03b2")[2]), gp=gpar(cex=0.8))
+grid.text(x=.555, y=.425-.011, bquote(italic("\u03b2")[3]), gp=gpar(cex=0.8))
+grid.text(x=.555, y=.595+.042, bquote(italic("\u03b2")[4]), gp=gpar(cex=0.8))
+grid.text(x=.555, y=.765-.021, bquote(italic("\u03b2")[5]), gp=gpar(cex=0.8))
+grid.text(x=.555, y=.935-.085, bquote(italic("\u03b2")[6]), gp=gpar(cex=0.8))
+
+grid.text(x=.165, y=.100, "Level 1 (Students):", name="l1", just="left")
+grid.text(x=.165, y=.360, "Level 2 (Classes):", name="l2", just="left")
+grid.text(x=.165, y=.770, "Level 3 (Schools):", name="l3", just="left")
+
+# separators
+grid.segments(grobX("l3",180), grobY("y3",270), grobX("y3",0), grobY("y3",270),
+              gp=gpar(fill="black", lty="dotted")) 
+grid.segments(grobX("l2",180), grobY("y2",270), grobX("y2",0), grobY("y2",270),
+              gp=gpar(fill="black", lty="dotted")) 
+
+upViewport()
+```
+
+Notice how this model allows (a) for lower-level variables to have variance at the different levels, and (b) for the for the variables to be related to each other to different extents at each level.
+These features must be taken into account when conducting MI.
+
+### Example data
+
+```{r, echo=FALSE}
+n <- 10
+J <- 5
+K <- 50
+
+i3 <- rep(1:K, each=n*J)
+i2 <- rep(1:(K*J), each=n)
+i1 <- 1:(n*J*K)
+
+x3 <- rnorm(K, 0, sqrt(.3))[i3]
+x2 <- rnorm(K*J, 0, sqrt(.15))[i2]
+x1 <- rnorm(n*J*K, 0, sqrt(.65))
+
+x <- x1+x2+x3
+xm2 <- aggregate(x, list(i2), mean)[i2,2]
+xm3 <- aggregate(x, list(i3), mean)[i3,2]
+
+w <- rnorm(K, 0, 1)[i3]
+z <- rnorm(K*J, 0, 1)[i2]
+
+b1 <- 0.2
+b2 <- 0.5
+b3 <- 0.3
+b4 <- -0.15
+b5 <- -0.1
+
+yhat <- b1*x + b2*xm2 + b3*xm3 + b4*z + b5*w
+
+u3 <- rnorm(K, 0, sqrt(.2))[i3]
+u2 <- rnorm(K*J, 0, sqrt(.10))[i2]
+e <- rnorm(n*J*K, 0, sqrt(.30))
+y <- yhat + u3 + u2 + e
+
+rx <- ifelse(x < mean(x), runif(sum(x < mean(x))) < 0.2, FALSE)
+ry <- runif(n*J*K) < 0.2
+rz <- (runif(J*K) < 0.1)[i2]
+rw <- (runif(K) < 0.1)[i3]
+
+dat <- data.frame(class=i2, school=i3, x=x, y=y, z=z, w=w)
+dat$x[rx] <- NA
+dat$y[ry] <- NA
+dat$z[rz] <- NA
+dat$w[rw] <- NA
+
+# save data
+#save(dat, file="example_3l.Rdata")
+#write.csv(dat, file="example_3l.csv")
+```
+
+For this example, I simulated data with a three-level structure consisting of 50 schools (level 3), five classrooms per school (level 2), and 10 students per classroom (level 1, total $n$ = `r n*J*K`).
+The data can be downloaded here ([CSV](/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_3l.csv), [Rdata](/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_3l.Rdata)).
+
+```{r, echo=FALSE}
+library(kableExtra)
+
+tab <- kable(dat[c(1:3, (1:3)+n, (nrow(dat)-2):nrow(dat)),], digits=3, align="r", row.names=FALSE)
+tab <- kableExtra::group_rows(tab, NULL, 1, 3, label_row_css="border-bottom: none; display: none;")
+tab <- kableExtra::group_rows(tab, "...", 4, 6, label_row_css="border-bottom: none; text-align: right;", colnum=1)
+tab <- kableExtra::group_rows(tab, "...", 7, 9, label_row_css ="border-bottom: none; text-align: right;", colnum=1)
+tab
+```
+
+Every row corresponds to one student, and the classrooms and schools are numbered consecutively. All variables in the data set contain missing data.
+
+### Multiple imputation
+
+To perform MI, I use the R packages [`mice`](https://cran.r-project.org/package=mice) and [`miceadds`](https://cran.r-project.org/package=miceadds).
+The `mice` package treats missing data by iterating through a sequence of imputation models, thus treating variable after variable in a step-by-step manner (for a general introduction to `mice`, see [van Buuren & Groothuis-Oudshoorn, 2011](#vanBuuren2011)).
+
+The imputation models are set up by defining (a) a *method* for each variable, naming the type of model to be used, and (b) a *predictor matrix*, naming which predictors (columns) should be used each variable (rows).
+Extracting the defaults provides a good starting point.
+
+```{r}
+library(mice)
+library(miceadds)
+
+# predictor matrix and imputation method (defaults)
+predMatrix <- make.predictorMatrix(data = dat)
+impMethod <- make.method(data = dat)
+```
+
+By default, `mice` uses methods intended for non-hierarchical data.
+For multilevel data, we need to ensure that the imputation model takes the multilevel structure into account such that the models will need to include variance components at higher levels and allow for different relations between variables at different levels.
+
+#### Setting up imputation models
+
+To this end, we use (a) the `ml.lmer` method from `miceadds` to impute the lower-level variables `x`, `y`, and `z`, and (b) the `2lonly.norm` method from `mice` to impute `w` at the "top" of the hierarchy.
+
+```{r}
+# method for lower-level variables (x, y, and z)
+impMethod[c("x", "y", "z")] <- "ml.lmer"
+
+# method for variables at top level (w)
+impMethod["w"] <- "2lonly.norm"
+```
+
+The two functions require that the hierarchical structure of the imputation model is set up in different ways.
+To make this easier, we first remove the cluster indicators from the set of predictors altogether by setting their column values to zero.
+
+```{r}
+# remove indicator variables from predictor matrix
+predMatrix[, c("class", "school")] <- 0
+
+```
+
+For variables imputed with `2lonly.norm`, the hierarchical structure is relatively simple and can be specified in the predictor matrix by setting the highest-level cluster indicator to `-2`.
+Here, the "top" indicator is `school`.
+
+```{r}
+# ... specify cluster indicator (2lonly.norm)
+predMatrix["w", "school"] <- -2
+```
+
+For variables imputed with `ml.lmer`, the hierarchical structure can be more complicated and must be set with two additional arguments (i.e., outside the predictor matrix).
+First, for all higher-level variables (e.g., `z` and `w`), we need to specify the level at which the variables are measured (all others are assumed to be at level 1).
+
+```{r}
+# ... specify levels of higher-level variables
+level <- character(ncol(dat))
+names(level) <- colnames(dat)
+
+level["w"] <- "school"
+level["z"] <- "class"
+```
+
+Second, for each variable, we need to specify the cluster variables that define the hierarchical structure in the imputation model.
+By default, this uses a random intercept model with random effects at each of the specified levels.
+
+```{r}
+# ... specify cluster indicators (as list)
+cluster <- list()
+
+cluster[["x"]] <- c("class", "school")
+cluster[["y"]] <- c("class", "school")
+cluster[["z"]] <- c("school")
+```
+
+Notice that we did not have to specify at which level the variables are meant to predict one another.
+This is because both `ml.lmer` and `2lonly.norm` will calculate and include any aggregates of lower-level variables at higher levels whenever possible, meaning that the relations between variables at different levels are automatically included in the imputation models.
+
+#### Imputation
+
+To start the imputation, we can now run `mice` as follows.
+
+```{r imp1, results="hide", cache=TRUE}
+# run mice
+imp <- mice(dat, method = impMethod, predictorMatrix = predMatrix, maxit = 20,
+            m = 20, levels_id = cluster, variables_levels = level)
+```
+
+This generates 20 imputations for the missing data.
+
+### Example analysis
+
+I use the R packages [`mitml`](https://cran.r-project.org/package=mitml) and [`lme4`](https://cran.r-project.org/package=lme4) to analyze the imputed data.
+First, I extract a list imputed data sets and calculate the cluster means that we need in order to fit the analysis model.
+
+```{r}
+library(mitml)
+
+# create list of imputed data sets
+implist <- mids2mitml.list(imp)
+
+# calculate group means
+implist <- within(implist, {
+  x.cls <- clusterMeans(x, class)
+  x.sch <- clusterMeans(x, school)
+})
+```
+
+The analysis model is then fitted with the `lme4` package, and the results are pooled with `mitml` with the following lines of code.
+
+```{r}
+library(lme4)
+
+# fit model
+fit <- with(implist,{
+  lmer(y ~ 1 + x + x.cls + x.sch + z + w + (1|class) + (1|school))
+})
+
+# pool results
+testEstimates(fit, var.comp = TRUE)
+```
+
+These results are very close to the parameters I used to generate the data.
+In the next example, we move on to clustered data with a cross-classified structure.
+
+## Cross-classified data
+
+Suppose that we ran an experiment, in which subjects responded to items or stimuli, and obtained data for three variables $y$, $a$, and $z$, where $y$ is the outcome at level 1, $a$ is a binary variable at the item level representing the experimental conditions, and $b$ is a covariate at the person level.
+Our model of interest is as follows.
+For response $i$ of subject $j$ on item $k$ 
+
+$$
+y_{ijk} = \beta_0 + \beta_1 z_j + \beta_2 a_k
+ + u_j + v_k + e_{ijk} \; ,
+$$
+
+where $u_j$ and $v_k$ denote random effects for subjects and items, respectively.
+The model can be illustrated like this.
+
+```{r, fig.width=5.6, fig.height=1.2, dev.args=list(pointsize=10), echo=FALSE}
+grid.newpage()
+pushViewport(viewport(width=unit(1,"npc"), height=unit(1,"npc")))
+
+h <- w <- stringWidth("MM") + unit(2,"mm")
+arr <- arrow(length=unit(1.2,"mm"), type="closed")
+
+# y, a, z
+grid.rect(x=.444, y=.450, width=w, height=h, name="z2", gp=gpar(col=0))
+grid.text(x=.444, y=.450, bquote(italic(z[j])))
+grid.rect(x=.444, y=.775, width=w, height=h, name="a2", gp=gpar(col=0))
+grid.text(x=.444, y=.775, bquote(italic(a[k])))
+
+# y
+grid.rect(x=.666, y=.125, width=w, height=h, name="y1", gp=gpar(col=0))
+grid.text(x=.666, y=.125, bquote(italic(y[ijk]^{L1})))
+
+grid.rect(x=.666, y=.450, width=w, height=h, name="y2a", gp=gpar(col=0))
+grid.text(x=.666, y=.450, bquote(italic(y[j]^{L2a})))
+
+grid.rect(x=.666, y=.775, width=w, height=h, name="y2b", gp=gpar(col=0))
+grid.text(x=.666, y=.775, bquote(italic(y[k]^{L2b})))
+
+# residuals
+grid.rect(x=.666+.080, y=.125+.165, width=w, height=h, name="e", gp=gpar(col=0))
+grid.text(x=.666+.080, y=.125+.165, bquote(italic(e[ijk])))
+
+grid.rect(x=.666+.080, y=.450+.165, width=w, height=h, name="u", gp=gpar(col=0))
+grid.text(x=.666+.080, y=.450+.165, bquote(italic(u[j])))
+
+grid.rect(x=.666+.080, y=.775+.165, width=w, height=h, name="v", gp=gpar(col=0))
+grid.text(x=.666+.080, y=.775+.165, bquote(italic(v[k])))
+
+# arrows
+grid.segments(grobX("z2",0), grobY("z2",0), grobX("y2a",180), grobY("y2a",180),
+              arrow=arr, gp=gpar(fill="black")) 
+grid.segments(grobX("a2",0), grobY("a2",0), grobX("y2b",180), grobY("y2b",180),
+              arrow=arr, gp=gpar(fill="black")) 
+
+grid.segments(grobX("e",235), grobY("e",195), grobX("y1",45), grobY("y1",20),
+              arrow=arr, gp=gpar(fill="black")) 
+grid.segments(grobX("u",235), grobY("u",195), grobX("y2a",45), grobY("y2a",20),
+              arrow=arr, gp=gpar(fill="black")) 
+grid.segments(grobX("v",235), grobY("v",195), grobX("y2b",45), grobY("y2b",20),
+              arrow=arr, gp=gpar(fill="black")) 
+
+# labels
+grid.text(x=.555, y=.450+.080, bquote(italic("\u03b2")[1]), gp=gpar(cex=0.8))
+grid.text(x=.555, y=.775+.080, bquote(italic("\u03b2")[2]), gp=gpar(cex=0.8))
+
+grid.text(x=.165, y=.125, "Level 1 (Responses):", name="l1", just="left")
+grid.text(x=.165, y=.450, "Level 2a (Subjects):", name="l2a", just="left")
+grid.text(x=.165, y=.775, "Level 2b (Items):", name="l2b", just="left")
+
+# separators
+grid.segments(grobX("l2a",180), grobY("y2a",270)-unit(.045,"npc"), grobX("y2a",0),
+              grobY("y2a",270)-unit(.045,"npc"), gp=gpar(fill="black", lty="dotted")) 
+
+upViewport()
+```
+
+You can see that this model is relatively simple because it does not contain aggregated variables.[^1]
+Nonetheless, it allows for (a) an effect of the experimental condition at the item level, (b) relations with the covariate at the person level, and (c) residual variance in the outcome at the level of items, subjects, and responses (i.e., in the interaction of items and subjects).
+
+Notice how there is no "third" level in this model.
+Instead, the "top" level includes both subjects and items, which are not further nested in one another.
+
+### Example data
+
+```{r, echo=FALSE}
+set.seed(518)
+```
+
+```{r, echo=FALSE}
+n <- 1
+J <- 50
+K <- 100
+
+i2a <- rep(1:J, times=K)
+i2b <- rep(1:K, each=J)
+
+a <- rep_len(0:1, J)[i2a]
+#a <- sample(0:1, J, replace=TRUE)
+z <- rnorm(K*J, 0, 1)[i2b]
+
+b1 <- 0.5
+b2 <- -0.15
+
+yhat <- b1*a + b2*z
+
+u2a <- rnorm(J, 0, sqrt(.15))[i2a]
+u2b <- rnorm(K, 0, sqrt(.30))[i2b]
+e <- rnorm(n*J*K, 0, sqrt(.45))
+y <- yhat + u2a + u2b + e
+
+rz <- (runif(K) < 0.25)[i2b]
+ry <- (runif(n*K*J) < 0.05)
+
+dat <- data.frame(item=i2a, subject=i2b, y=y, a=a, z=z)
+dat$y[ry] <- NA
+dat$z[rz] <- NA
+
+# add single missing for display
+dat$y[3] <- NA
+
+# save data
+#save(dat, file="example_cc.Rdata")
+#write.csv(dat, file="example_cc.csv")
+```
+
+For this example, I simulated data with a cross-classified structure and a total of $n$ = `r n*J*K` responses (level 1) from `r K` subjects (level 2b) to `r J` items (level 2a).
+The experimental condition ($a$ = 1) comprised all even-numbered items; the control ($a$ = 0) all the odd-numbered items.
+The data can be downloaded here ([CSV](/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_cc.csv), [Rdata](/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_cc.Rdata)).
+
+```{r, echo=FALSE}
+library(kableExtra)
+
+tab <- kable(dat[c(1:3, (nrow(dat)-2):nrow(dat)),], digits=3, align="r", row.names=FALSE)
+tab <- kableExtra::group_rows(tab, NULL, 1, 3, label_row_css="border-bottom: none; display: none;")
+tab <- kableExtra::group_rows(tab, "...", 4, 6, label_row_css="border-bottom: none; text-align: right;", colnum=1)
+tab
+```
+
+Some of the responses ($y$) are sporadically missing. In addition, a number of subjects failed to provide data on the subject-level covariate ($z$).
+
+### Multiple imputation
+
+The main strategy for MI remains the same as in the previous example.
+In order to accommodate the multilevel structure, we again need to ensure that the imputation model allows for the variables to have variance and relations with each other at different levels, with the exception that aggregated variables are not used here (see Footnote [1](#fn1)).
+
+We again start with the default setup and adjust it as we need to.
+
+```{r}
+# create default predictor matrix and imputation methods
+predMatrix <- make.predictorMatrix(data = dat)
+impMethod <- make.method(data = dat)
+```
+
+#### Setting up imputation models
+
+In this example, only `y` and `z` contain missing data.
+For the lower-level variable `y` we again use the `ml.lmer` method.
+For `z`, we use `2lonly.norm` because it is located at the "top" of the hierarchy (despite it not being there alone).[^2]
+
+```{r}
+# method for lower-level variables (y)
+impMethod["y"] <- "ml.lmer"
+
+# ... for variables at top level (z)
+impMethod["z"] <- "2lonly.norm"
+```
+
+To set up these methods, we begin by removing the cluster indicators from the predictor matrix.
+
+```{r}
+# remove indicator variables from set of predictors
+predMatrix[, c("subject", "item")] <- 0
+```
+
+For variables imputed with `2lonly.norm`, the hierarchical structure is then specified in the predictor matrix by setting its cluster indicator to `-2`.
+The cluster indicator for `z` is `subject`.
+
+```{r}
+# specify cluster indicator (2lonly.norm)
+predMatrix["z", "subject"] <- -2
+```
+
+For variables imputed with `ml.lmer`, the setup again requires a few extra arguments.
+Specifically, we need to specify (a) the level at which the higher-level variables (`a` and `z`) are measured and (b) the cluster variables that define the clustered structure in the imputation model of `y`.
+
+```{r}
+# specify levels of higher-level variables
+level <- character(ncol(dat))
+names(level) <- colnames(dat)
+
+level["a"] <- "item"
+level["z"] <- "subject"
+
+# specify cluster indicators (as list)
+cluster <- list()
+
+cluster[["y"]] <- c("subject", "item")
+```
+
+Recall that `ml.lmer` and `2lonly.norm` automatically calculate and include any aggregated variables in every step of the imputation.
+However, in this cross-classified design these aggregates turn out to be constant because every person responds to every item (see Footnote [1](#fn1)).
+For this reason, the aggregates need to be removed from the imputation model.
+
+For variables imputed with `2lonly.norm`, we can do this by removing variables from the predictor matrix. 
+For `z`, we remove `a` from the set of predictors such that `z` is only predicted by the subject level aggregate of `y` (but not `a`).
+
+```{r}
+# remove effect of (average) a on z
+predMatrix["z", "a"] <- 0
+```
+
+For variables imputed with `ml.lmer`, this is not done in the predictor matrix but with a global argument when running the imputation.[^3]
+
+#### Imputation
+
+To start the imputation, we run `mice` as follows.
+To turn off the automatic aggregation of variables for `ml.lmer`, I also set the argument `aggregate_automatically = FALSE`.
+
+```{r imp2, results="hide", cache=TRUE}
+# run mice
+imp <- mice(dat, method = impMethod, predictorMatrix = predMatrix, maxit = 20, 
+            m = 20, levels_id = cluster, variables_levels = level,
+            aggregate_automatically = FALSE)
+```
+
+### Example analysis
+
+The analysis of the data is done with `lme4` and `mitml` as before.
+First, we extract the imputed data sets as a list.
+
+```{r}
+# create list of imputed data sets
+implist <- mids2mitml.list(imp)
+```
+
+Then we fit the analysis model with `lme4` and pool the results with `mitml`.
+
+```{r}
+# fit model
+fit <- with(implist,{
+  lmer(y ~ 1 + a + z + (1|item) + (1|subject))
+})
+
+# pool results
+testEstimates(fit, var.comp = TRUE)
+```
+
+The results are again close to the true values I used to generate the data.
+
+## Final remarks
+
+In two examples, I showed how to conduct MI for three-level and cross-classified data in R.
+In both cases, the hierarchical structure of the data and the relations that exist between variables at different levels of the structure have to be taken into account in the imputation model.
+This ensures that the imputations are in line with the posited structure of the data, without which MI might lead to biased results.
+We saw that this requires that we (a) choose appropriate imputation methods for hierarchical data (e.g., those in `mice` and `miceadds`) and (b) include aggregated versions of variables into the imputation model.
+
+Notice that, although the two types of hierarchical data are very different, the ideas for treating missing data therein were similar.
+This is because, the random effects used to represent the hierarchical structure are *additive* in both cases.
+In fact, the same techniques can be used to treat missing data in any application where that is the case (e.g., nested data with four or more levels, more complex cross-classification, or a combination of the two).
+
+The examples presented here used simulated continuous data.
+Similar methods are available for binary, ordinal, and (to some extent) polytomous data.
+
+## Further reading
+
+* [Enders, Mistler, and Keller (2016)](#Enders2016) and [Lüdtke, Robitzsch, and Grund (2017)](#Ludtke2017) provide a general introduction to missing data and MI in hierarchical data with an emphasis on two-level data.
+* Further examples for the imputation of three-level data with `mice` and `miceadds` can be found in the [documentation](https://cran.r-project.org/web/packages/miceadds/miceadds.pdf) of the `miceadds` package.
+* The Blimp software ([Keller & Enders, 2018](#Keller2018)) also supports MI for three-level data with some examples shown [here](http://www.appliedmissingdata.com/multilevel-imputation.html).
+
+## References {#bib}
+
+<ul class="bibliography">
+  <li id="Enders2016">Enders, C. K., Mistler, S. A., &amp; Keller, B. T. (2016). Multilevel multiple imputation: A review and evaluation of joint modeling and chained equations imputation. <i>Psychological Methods</i>, <i>21</i>, 222–240. <a href="https://doi.org/10.1037/met0000063">doi:10.1037/met0000063</a></li>
+  <li id="Keller2018">Keller, B. T., &amp; Enders, C. K. (2018). <i>Blimp Software Manual (Version 1.1)</i>.</li>
+  <li id="Ludtke2017">Lüdtke, O., Robitzsch, A., &amp; Grund, S. (2017). Multiple imputation of missing data in multilevel designs: A comparison of different strategies. <i>Psychological Methods</i>, <i>22</i>, 141–165. <a href="https://doi.org/10.1037/met0000096">doi:10.1037/met0000096</a></li>
+  <li id="vanBuuren2011">van Buuren, S., &amp; Groothuis-Oudshoorn, K. (2011). MICE: Multivariate imputation by chained equations in R. <i>Journal of Statistical Software</i>, <i>45</i>(3), 1–67. <a href="https://doi.org/10.18637/jss.v045.i03">doi:10.18637/jss.v045.i03</a></li>
+</ul>
+
+[^1]: In the present case, aggregating $a$ and $z$ is not useful, because all items are answered by all subjects, so that the aggregates of $a$ at the person level and $z$ at the item level are constant (e.g., every person responds to the same number of items in the experimental and control condition).
+However, aggregated variables can still play a role in cross-classified data.
+For example, there can be other variables at level 1 (e.g., a covariate providing information about individual trials) or the experimental manipulation may be applied at level 1 (e.g., if it is applied randomly to items on a trial-by-trial basis).
+In such a case, the aggregated of these variables would *not* be constant and may need to be taken into account during MI.
+
+[^2]: If the item-level variable $a$ also had missing data, we would treat it the same way (i.e., with `2lonly.norm`) but specify a different cluster indicator in the predictor matrix (i.e., `item`).
+
+    ```{r}
+    # specify imputation method
+    impMethod["a"] <- "2lonly.norm"
+    
+    # specify cluster indicator
+    predMatrix["a", "item"] <- -2
+    ```
+
+    This is not needed here because `a` has no missing data.
+
+[^3]: If there are that need to be aggregated (e.g., other variables at level 1), then the aggregation needs to be done "by hand", either by calculating the aggregated variables beforehand (if the variables are completely observed) or by using "passive imputation" (if they are incomplete).
+
+
+

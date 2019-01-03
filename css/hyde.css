@@ -127,7 +127,7 @@ a:focus {
   margin-bottom: 1.80rem;
 }
 .section h3 {
-  margin-top: 1.80rem;
+  margin-top: 1.85rem;
   margin-bottom: 1.70rem;
 }
 .section h4 {
@@ -139,7 +139,7 @@ div.post > h2 {
   margin-bottom: 1.85rem;
 }
 div.post > h3 {
-  margin-top: 1.80rem;
+  margin-top: 1.85rem;
   margin-bottom: 1.60rem;
 }
 div.post > h4 {
@@ -147,8 +147,27 @@ div.post > h4 {
   margin-bottom: 1.35rem;
 }
 
+/* Blockquotes */
+
+blockquote {
+  background-color: #f9f8f7;
+  color: #3c3836;
+  border: 1px solid #b8b6a4;
+  padding: .6rem .8rem .65rem .8rem;
+  position: relative;
+}
+blockquote:after {
+  background: linear-gradient(to right, #b8b6b4 12%, #f9f8f7 10%, #f9f8f7 100%);
+  content: '';
+  height: 3px;
+  position: absolute;
+  right: 0;
+  left: 0;
+  top: 0;
+}
 
 /* Dates */
+
 .post-date, .list-date, .summary-date {
   color: #928374;
 }

@@ -3,7 +3,7 @@
 <head>
   <link href="http://gmpg.org/xfn/11" rel="profile">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta name="generator" content="Hugo 0.42.1" />
+  <meta name="generator" content="Hugo 0.53" />
 
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -153,7 +153,7 @@
 
     <div class="sidebar-footer">
       <p>Based on Hyde theme for Hugo</p>
-      <p>&copy; 2018 / All rights reserved</p>
+      <p>&copy; 2019 / All rights reserved</p>
     </div>
 
   </div>
@@ -168,7 +168,10 @@
     <div class="post">
   <h1 class="post-title">Dealing with missing data in ANOVA models</h1>
   <span class="post-date">June 25, 2018<span style="padding-left:0.5rem"></span></span>
-  <p>The analysis of variance, or ANOVA, is among the most popular methods for analyzing how an outcome variable differs between groups, for example, in observational studies or in experiments with different conditions.</p>
+  
+
+
+<p>The analysis of variance, or ANOVA, is among the most popular methods for analyzing how an outcome variable differs between groups, for example, in observational studies or in experiments with different conditions.</p>
 <p>But how do we conduct the ANOVA when there are missing data?
 In this post, I show how to deal with missing data in between- and within-subject designs using multiple imputation (MI) in <a href="https://www.r-project.org/">R</a>.</p>
 <div id="the-anova-model" class="section level2">
@@ -368,36 +371,36 @@ Fortunately, the procedure for the treatment and missing data and the analysis r
 <td>1</td>
 <td align="right">1</td>
 <td align="right">A</td>
-<td align="right">NA</td>
-<td align="right">-2.19</td>
+<td align="right">-1.699</td>
+<td align="right">-1.11</td>
 </tr>
 <tr class="even">
 <td>2</td>
 <td align="right">1</td>
 <td align="right">B</td>
-<td align="right">-0.752</td>
-<td align="right">-2.19</td>
+<td align="right">-1.022</td>
+<td align="right">-1.11</td>
 </tr>
 <tr class="odd">
 <td>3</td>
 <td align="right">1</td>
 <td align="right">C</td>
-<td align="right">-0.693</td>
-<td align="right">-2.19</td>
+<td align="right">-0.287</td>
+<td align="right">-1.11</td>
 </tr>
 <tr class="even">
 <td>4</td>
 <td align="right">1</td>
 <td align="right">A</td>
-<td align="right">NA</td>
-<td align="right">-2.19</td>
+<td align="right">-1.588</td>
+<td align="right">-1.11</td>
 </tr>
 <tr class="odd">
 <td>5</td>
 <td align="right">1</td>
 <td align="right">B</td>
-<td align="right">0.713</td>
-<td align="right">-2.19</td>
+<td align="right">-2.028</td>
+<td align="right">-1.11</td>
 </tr>
 </tbody>
 </table>
@@ -405,7 +408,7 @@ Fortunately, the procedure for the treatment and missing data and the analysis r
 <ul>
 <li><code>id</code>: the subject identifier</li>
 <li><code>cond</code>: the grouping variable (within subjects)</li>
-<li><code>y</code>: the repeated measurements for the outcome variable (with 18% missing data)</li>
+<li><code>y</code>: the repeated measurements for the outcome variable (with 18.7% missing data)</li>
 <li><code>x</code>: a subject-specific covariate</li>
 </ul>
 <p>Like above, persons with lower values in <code>x</code> had a higher chance of missing data in <code>y</code>. Notice that <code>cond</code> varies within subjects, making the repeated measures for each condition “nested” within subjects.</p>
@@ -416,7 +419,7 @@ Instead, it needs to accommodate this structure by also employing a mixed-effect
 Specifying this model is easiest by first initializing the imputation model with the default values.</p>
 <pre class="r"><code># run MI (for starting solution)
 ini &lt;- mice(data = dat, maxit = 0)</code></pre>
-<p>Then we define the subject identifier for the imputation model (<code>id</code>) and change the imputation method to a use a mixed-effects model (<code>&quot;2l.pan&quot;</code>).
+<p>Then we define the subject identifier for the imputation model (<code>id</code>) and change the imputation method to a use a mixed-effects model (<code>"2l.pan"</code>).
 Running MI is then the same as before.</p>
 <pre class="r"><code># define the &#39;subject&#39; identifier (code as &#39;-2&#39; in predictor matrix)
 pred &lt;- ini$pred
@@ -545,8 +548,9 @@ testConstraints(fit2, constraints = con, method = &quot;D1&quot;)</code></pre>
 # Hypothesis test calculated from 100 imputed data sets. The following
 # constraints were specified:
 # 
-#  groupB
-#  groupC
+#              Estimate Std. Error 
+#    groupB:      0.207      0.202 
+#    groupC:     -0.333      0.202 
 # 
 # Combination method: D1 
 # 
@@ -561,6 +565,7 @@ testConstraints(fit2, constraints = con, method = &quot;D1&quot;)</code></pre>
   
     <p class="post-tags">
     tags: 
+      <a href="/tags/r">[r]</a>
       <a href="/tags/missing-data">[missing data]</a>
       <a href="/tags/multiple-imputation">[multiple imputation]</a>
       <a href="/tags/anova">[anova]</a></p>
@@ -569,7 +574,7 @@ testConstraints(fit2, constraints = con, method = &quot;D1&quot;)</code></pre>
 
 <h2>Comments</h2> 
 <div id="disqus_thread"></div>
-<script>
+<script type="application/javascript">
     var disqus_config = function () {
     
     
@@ -592,7 +597,7 @@ testConstraints(fit2, constraints = con, method = &quot;D1&quot;)</code></pre>
     </div>
 
     
-<script>
+<script type="application/javascript">
 var doNotTrack = false;
 if (!doNotTrack) {
 	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;

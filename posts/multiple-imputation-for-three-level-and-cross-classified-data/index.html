@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.53" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Multiple imputation for three-level and cross-classified data &middot; Simon Grund</title>
+
+  
+  <link rel="stylesheet" href="https://simongrund1.github.io/css/print.css" media="print">
+  <link rel="stylesheet" href="https://simongrund1.github.io/css/poole.css">
+  <link rel="stylesheet" href="https://simongrund1.github.io/css/hyde.css">
+
+  
+  <script defer src="https://simongrund1.github.io/js/fontawesome-all.js"></script>
+  <link rel="stylesheet" href="https://simongrund1.github.io/css/academicons.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro|Source+Serif+Pro|Inconsolata">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/icon.png">
+  <link rel="shortcut icon" href="/icon-small.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="Simon Grund" />
+
+  
+  <link rel="stylesheet" href="https://simongrund1.github.io/css/code.css">
+  
+  <script src="https://simongrund1.github.io/js/highlight.pack.js"></script>
+  <script src="https://simongrund1.github.io/js/highlight.better-r.min.js"></script>
+
+  <script>
+    hljs.initHighlightingOnLoad()
+  </script>
+
+  
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  
+    MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$'], ['\\[','\\]']],
+      processEscapes: true,
+      processEnvironments: true,
+      preferredFont: "TeX",
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+           extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    }
+    });
+    MathJax.Hub.Config({
+      "HTML-CSS": {scale: 85}
+    });  
+  
+    MathJax.Hub.Queue(function() {
+    
+    
+    var i, text, code, codes = document.getElementsByTagName('code');
+      for (i = 0; i < codes.length;) {
+        code = codes[i];
+        if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+          text = code.textContent;
+          if (/^\$[^$]/.test(text) && /[^$]\$$/.test(text)) {
+            text = text.replace(/^\$/, '\\(').replace(/\$$/, '\\)');
+            code.textContent = text;
+          }
+          if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+              /^\$(.|\s)+\$$/.test(text) ||
+              /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+            code.outerHTML = code.innerHTML;  
+            continue;
+          }
+        }
+        i++;
+      }
+    })(); 
+
+    MathJax.Hub.Config({
+    
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+    });
+
+    MathJax.Hub.Config({
+    
+      "HTML-CSS": {
+        styles: {
+          ".MathJax .mo, .MathJax .mi": {color: "black ! important"}
+        }
+      }
+    });
+  </script>
+
+  
+  <script>
+    function toggleNavbar() {
+      var navMenu = document.getElementById("sidebar-main");
+      var switchIcon = document.getElementById("sidebar-switch-icon");
+      if ( navMenu.classList.contains("hidden") ) {
+         navMenu.classList.remove("hidden");
+         navMenu.style.maxHeight = "25rem";
+         switchIcon.classList.remove("fa-chevron-down");
+         switchIcon.classList.add("fa-chevron-up");
+      } else {
+         navMenu.classList.add("hidden");
+         navMenu.style.maxHeight = "0";
+         switchIcon.classList.remove("fa-chevron-up");
+         switchIcon.classList.add("fa-chevron-down");
+      }
+    }
+  </script>
+</head>
+
+  <body class="theme-base-00 ">
+  <div class="sidebar">
+
+  <div id="sidebar-main" class="container sidebar-sticky hidden">
+
+    <div class="sidebar-about">
+      <a href="https://simongrund1.github.io/"><h1>Simon Grund</h1></a>
+    </div>
+
+    <p class="sidebar-orcid">
+      <i class="ai ai-orcid" style="color:#fff"></i>
+      <a href="https://orcid.org/0000-0002-1290-8986">0000-0002-1290-8986</a>
+    </p>
+
+    PhD, Quantitative Psychology
+
+    <ul class="sidebar-nav">
+      <li><a href="https://simongrund1.github.io/">Home</a> </li>
+      <li><a href="/posts"> Blog </a></li><li><a href="/publications/"> Publications </a></li><li><a href="/software/"> Software </a></li>
+    </ul>
+
+    <div class="sidebar-links">
+      <a href="https://twitter.com/simongrund89">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a href="https://github.com/simongrund1">
+        <i class="fab fa-github"></i>
+      </a>
+      <a href="https://www.researchgate.net/profile/Simon_Grund">
+        <i class="ai ai-researchgate"></i>
+      </a>
+      <a href="https://scholar.google.de/citations?user=RkmNDJgAAAAJ">
+        <i class="ai ai-google-scholar"></i>
+      </a>
+    </div>
+
+    <div class="sidebar-footer">
+      <p>Based on Hyde theme for Hugo</p>
+      <p>&copy; 2019 / All rights reserved</p>
+    </div>
+
+  </div>
+
+  <div id="sidebar-switch" onclick="toggleNavbar()">
+    <i id="sidebar-switch-icon" class="fas fa-chevron-down"></i>
+  </div>
+
+</div>
+
+    <div class="content container">
+    <div class="post">
+  <h1 class="post-title">Multiple imputation for three-level and cross-classified data</h1>
+  <span class="post-date">January 3, 2019<span style="padding-left:0.5rem"></span></span>
+  
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
+
+
+<p>Multiple imputation (MI) of missing values in hierarchical data can be tricky when the data do not have a simple two-level structure.
+In such a case, understanding and accounting for the hierarchical structure of the data can be challenging, and tools to handle these types of data are relatively rare.</p>
+<p>In this post, I show and explain how to conduct MI for three-level and cross-classified data in <a href="https://www.r-project.org/">R</a>.</p>
+<div id="types-of-hierarchical-data" class="section level2">
+<h2>Types of hierarchical data</h2>
+<p>Hierarchical data have a clustered structure in the sense that observations are clustered in higher-level units (e.g., observations in persons, persons in groups).
+Here, I consider two types of this: nested and cross-classified data.</p>
+<div id="nested-data" class="section level3">
+<h3>Nested data</h3>
+<p>In nested data, every observation belongs to one and only one higher-level unit.
+Two-level data are a simple example for this type data, as shown below for three clusters with <span class="math inline">\(n\)</span> observations.</p>
+<p><img src="/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/unnamed-chunk-1-1.png" width="460.8" /></p>
+<p>More deeply nested structures are possible.
+For example, in three-level data, the clusters themselves are nested in even-higher-level units (e.g., students nested in classrooms nested in schools).</p>
+<p><img src="/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/thumbnail-1.png" width="460.8" /></p>
+<p>Here, observations <span class="math inline">\(p\)</span> are nested within clusters <span class="math inline">\(C\)</span>, and clusters are nested within higher-level clusters <span class="math inline">\(D\)</span>.</p>
+</div>
+<div id="cross-classified-data" class="section level3">
+<h3>Cross-classified data</h3>
+<p>In cross-classified data, every observation belongs directly to two or more clusters at once (e.g., experimental data with observations clustered within subjects <em>and</em> stimuli).
+However, the clusters are not themselves nested within one another but “crossed” as shown below.</p>
+<p><img src="/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/unnamed-chunk-2-1.png" width="460.8" /></p>
+<p>In contrast to nested data, there is no clear hierarchy of the two cluster variables.
+Differently put, although both <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> have observations clustered within them, neither of the two is itself nested within the other.</p>
+</div>
+<div id="why-bother" class="section level3">
+<h3>Why bother?</h3>
+<p>For the treatment of missing data, the hierarchical structure must be taken into account when using model-based methods such as MI (<a href="#Enders2016">Enders, Mistler, &amp; Keller, 2016</a>; <a href="#Ludtke2017">Lüdtke, Robitzsch, &amp; Grund, 2017</a>).
+This means that we need to acknowledge that, in hierarchical data, variables can vary both within and between clusters, and multiple variables can be related at each level of the structure.</p>
+<p>Several articles have considered the case with two-level data (e.g., the two above).
+In the following, I show two examples for how to conduct MI for three-level and cross-classified data in R.</p>
+</div>
+</div>
+<div id="three-level-data" class="section level2">
+<h2>Three-level data</h2>
+<p>Suppose we have data from students (level 1) nested in classrooms (level 2) nested in schools (level 3) on four variables <span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span>, <span class="math inline">\(z\)</span>, and <span class="math inline">\(w\)</span>, where <span class="math inline">\(x\)</span> and <span class="math inline">\(y\)</span> are measured at level 1, <span class="math inline">\(z\)</span> at level 2, and <span class="math inline">\(w\)</span> at level 3.
+Consider the following model.
+For student <span class="math inline">\(i\)</span>, classroom <span class="math inline">\(j\)</span>, and school <span class="math inline">\(k\)</span>,</p>
+<p><span class="math display">\[
+y_{ijk} = \beta_0 + \beta_1 x_{ijk} + \beta_2 \bar{x}_{\bullet jk} + \beta_3 z_{jk} + \beta_4 \bar{x}_{\bullet \bullet k} + \beta_5 \bar{z}_{\bullet k} + \beta_6 w_k
+ + u_{jk} + v_k + e_{ijk} \; ,
+\]</span></p>
+<p>where <span class="math inline">\(\bar{x}_{\bullet jk}\)</span> and <span class="math inline">\(\bar{x}_{\bullet \bullet k}\)</span> are the classroom and school mean of <span class="math inline">\(x\)</span>, <span class="math inline">\(\bar{z}_{\bullet k}\)</span> is the school mean of <span class="math inline">\(z\)</span>, and <span class="math inline">\(u_{jk}\)</span> and <span class="math inline">\(v_k\)</span> are random intercepts at the classroom and school level, respectively.
+A graphical representation of the model is as follows.</p>
+<p><img src="/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/unnamed-chunk-3-1.png" width="537.6" /></p>
+<p>Notice how this model allows (a) for lower-level variables to have variance at the different levels, and (b) for the for the variables to be related to each other to different extents at each level.
+These features must be taken into account when conducting MI.</p>
+<div id="example-data" class="section level3">
+<h3>Example data</h3>
+<p>For this example, I simulated data with a three-level structure consisting of 50 schools (level 3), five classrooms per school (level 2), and 10 students per classroom (level 1, total <span class="math inline">\(n\)</span> = 2500).
+The data can be downloaded here (<a href="/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_3l.csv">CSV</a>, <a href="/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_3l.Rdata">Rdata</a>).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">
+class
+</th>
+<th style="text-align:right;">
+school
+</th>
+<th style="text-align:right;">
+x
+</th>
+<th style="text-align:right;">
+y
+</th>
+<th style="text-align:right;">
+z
+</th>
+<th style="text-align:right;">
+w
+</th>
+</tr>
+</thead>
+<tbody>
+<tr grouplength="3">
+<td colspan="6" style="border-bottom: none; display: none;">
+<strong></strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.318
+</td>
+<td style="text-align:right;">
+-0.261
+</td>
+<td style="text-align:right;">
+0.456
+</td>
+<td style="text-align:right;">
+1.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-0.251
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0.456
+</td>
+<td style="text-align:right;">
+1.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-0.648
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0.456
+</td>
+<td style="text-align:right;">
+1.33
+</td>
+</tr>
+<tr grouplength="3">
+<td colspan="1" style="border-bottom: none; text-align: right;">
+<strong>…</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-0.320
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+1.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.069
+</td>
+<td style="text-align:right;">
+0.548
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+1.33
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+1.33
+</td>
+</tr>
+<tr grouplength="3">
+<td colspan="1" style="border-bottom: none; text-align: right;">
+<strong>…</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+250
+</td>
+<td style="text-align:right;">
+50
+</td>
+<td style="text-align:right;">
+1.339
+</td>
+<td style="text-align:right;">
+1.451
+</td>
+<td style="text-align:right;">
+-0.630
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+250
+</td>
+<td style="text-align:right;">
+50
+</td>
+<td style="text-align:right;">
+0.441
+</td>
+<td style="text-align:right;">
+0.943
+</td>
+<td style="text-align:right;">
+-0.630
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+250
+</td>
+<td style="text-align:right;">
+50
+</td>
+<td style="text-align:right;">
+0.775
+</td>
+<td style="text-align:right;">
+0.568
+</td>
+<td style="text-align:right;">
+-0.630
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+<p>Every row corresponds to one student, and the classrooms and schools are numbered consecutively. All variables in the data set contain missing data.</p>
+</div>
+<div id="multiple-imputation" class="section level3">
+<h3>Multiple imputation</h3>
+<p>To perform MI, I use the R packages <a href="https://cran.r-project.org/package=mice"><code>mice</code></a> and <a href="https://cran.r-project.org/package=miceadds"><code>miceadds</code></a>.
+The <code>mice</code> package treats missing data by iterating through a sequence of imputation models, thus treating variable after variable in a step-by-step manner (for a general introduction to <code>mice</code>, see <a href="#vanBuuren2011">van Buuren &amp; Groothuis-Oudshoorn, 2011</a>).</p>
+<p>The imputation models are set up by defining (a) a <em>method</em> for each variable, naming the type of model to be used, and (b) a <em>predictor matrix</em>, naming which predictors (columns) should be used each variable (rows).
+Extracting the defaults provides a good starting point.</p>
+<pre class="r"><code>library(mice)
+library(miceadds)
+
+# predictor matrix and imputation method (defaults)
+predMatrix &lt;- make.predictorMatrix(data = dat)
+impMethod &lt;- make.method(data = dat)</code></pre>
+<p>By default, <code>mice</code> uses methods intended for non-hierarchical data.
+For multilevel data, we need to ensure that the imputation model takes the multilevel structure into account such that the models will need to include variance components at higher levels and allow for different relations between variables at different levels.</p>
+<div id="setting-up-imputation-models" class="section level4">
+<h4>Setting up imputation models</h4>
+<p>To this end, we use (a) the <code>ml.lmer</code> method from <code>miceadds</code> to impute the lower-level variables <code>x</code>, <code>y</code>, and <code>z</code>, and (b) the <code>2lonly.norm</code> method from <code>mice</code> to impute <code>w</code> at the “top” of the hierarchy.</p>
+<pre class="r"><code># method for lower-level variables (x, y, and z)
+impMethod[c(&quot;x&quot;, &quot;y&quot;, &quot;z&quot;)] &lt;- &quot;ml.lmer&quot;
+
+# method for variables at top level (w)
+impMethod[&quot;w&quot;] &lt;- &quot;2lonly.norm&quot;</code></pre>
+<p>The two functions require that the hierarchical structure of the imputation model is set up in different ways.
+To make this easier, we first remove the cluster indicators from the set of predictors altogether by setting their column values to zero.</p>
+<pre class="r"><code># remove indicator variables from predictor matrix
+predMatrix[, c(&quot;class&quot;, &quot;school&quot;)] &lt;- 0</code></pre>
+<p>For variables imputed with <code>2lonly.norm</code>, the hierarchical structure is relatively simple and can be specified in the predictor matrix by setting the highest-level cluster indicator to <code>-2</code>.
+Here, the “top” indicator is <code>school</code>.</p>
+<pre class="r"><code># ... specify cluster indicator (2lonly.norm)
+predMatrix[&quot;w&quot;, &quot;school&quot;] &lt;- -2</code></pre>
+<p>For variables imputed with <code>ml.lmer</code>, the hierarchical structure can be more complicated and must be set with two additional arguments (i.e., outside the predictor matrix).
+First, for all higher-level variables (e.g., <code>z</code> and <code>w</code>), we need to specify the level at which the variables are measured (all others are assumed to be at level 1).</p>
+<pre class="r"><code># ... specify levels of higher-level variables
+level &lt;- character(ncol(dat))
+names(level) &lt;- colnames(dat)
+
+level[&quot;w&quot;] &lt;- &quot;school&quot;
+level[&quot;z&quot;] &lt;- &quot;class&quot;</code></pre>
+<p>Second, for each variable, we need to specify the cluster variables that define the hierarchical structure in the imputation model.
+By default, this uses a random intercept model with random effects at each of the specified levels.</p>
+<pre class="r"><code># ... specify cluster indicators (as list)
+cluster &lt;- list()
+
+cluster[[&quot;x&quot;]] &lt;- c(&quot;class&quot;, &quot;school&quot;)
+cluster[[&quot;y&quot;]] &lt;- c(&quot;class&quot;, &quot;school&quot;)
+cluster[[&quot;z&quot;]] &lt;- c(&quot;school&quot;)</code></pre>
+<p>Notice that we did not have to specify at which level the variables are meant to predict one another.
+This is because both <code>ml.lmer</code> and <code>2lonly.norm</code> will calculate and include any aggregates of lower-level variables at higher levels whenever possible, meaning that the relations between variables at different levels are automatically included in the imputation models.</p>
+</div>
+<div id="imputation" class="section level4">
+<h4>Imputation</h4>
+<p>To start the imputation, we can now run <code>mice</code> as follows.</p>
+<pre class="r"><code># run mice
+imp &lt;- mice(dat, method = impMethod, predictorMatrix = predMatrix, maxit = 20,
+            m = 20, levels_id = cluster, variables_levels = level)</code></pre>
+<p>This generates 20 imputations for the missing data.</p>
+</div>
+</div>
+<div id="example-analysis" class="section level3">
+<h3>Example analysis</h3>
+<p>I use the R packages <a href="https://cran.r-project.org/package=mitml"><code>mitml</code></a> and <a href="https://cran.r-project.org/package=lme4"><code>lme4</code></a> to analyze the imputed data.
+First, I extract a list imputed data sets and calculate the cluster means that we need in order to fit the analysis model.</p>
+<pre class="r"><code>library(mitml)
+
+# create list of imputed data sets
+implist &lt;- mids2mitml.list(imp)
+
+# calculate group means
+implist &lt;- within(implist, {
+  x.cls &lt;- clusterMeans(x, class)
+  x.sch &lt;- clusterMeans(x, school)
+})</code></pre>
+<p>The analysis model is then fitted with the <code>lme4</code> package, and the results are pooled with <code>mitml</code> with the following lines of code.</p>
+<pre class="r"><code>library(lme4)
+
+# fit model
+fit &lt;- with(implist,{
+  lmer(y ~ 1 + x + x.cls + x.sch + z + w + (1|class) + (1|school))
+})
+
+# pool results
+testEstimates(fit, var.comp = TRUE)</code></pre>
+<pre><code># 
+# Call:
+# 
+# testEstimates(model = fit, var.comp = TRUE)
+# 
+# Final parameter estimates and inferences obtained from 20 imputed data sets.
+# 
+#              Estimate Std.Error   t.value        df   P(&gt;|t|)       RIV       FMI 
+# (Intercept)    -0.016     0.083    -0.193  2092.008     0.847     0.105     0.096 
+# x               0.191     0.017    10.997   179.755     0.000     0.482     0.333 
+# x.cls           0.456     0.056     8.119   294.696     0.000     0.340     0.259 
+# x.sch           0.358     0.154     2.324  1614.766     0.020     0.122     0.110 
+# z              -0.141     0.028    -5.046   394.655     0.000     0.281     0.223 
+# w              -0.069     0.085    -0.810   351.561     0.419     0.303     0.237 
+# 
+#                             Estimate 
+# Intercept~~Intercept|class     0.083 
+# Intercept~~Intercept|school    0.252 
+# Residual~~Residual             0.312 
+# 
+# Unadjusted hypothesis test as appropriate in larger samples.</code></pre>
+<p>These results are very close to the parameters I used to generate the data.
+In the next example, we move on to clustered data with a cross-classified structure.</p>
+</div>
+</div>
+<div id="cross-classified-data-1" class="section level2">
+<h2>Cross-classified data</h2>
+<p>Suppose that we ran an experiment, in which subjects responded to items or stimuli, and obtained data for three variables <span class="math inline">\(y\)</span>, <span class="math inline">\(a\)</span>, and <span class="math inline">\(z\)</span>, where <span class="math inline">\(y\)</span> is the outcome at level 1, <span class="math inline">\(a\)</span> is a binary variable at the item level representing the experimental conditions, and <span class="math inline">\(b\)</span> is a covariate at the person level.
+Our model of interest is as follows.
+For response <span class="math inline">\(i\)</span> of subject <span class="math inline">\(j\)</span> on item <span class="math inline">\(k\)</span></p>
+<p><span class="math display">\[
+y_{ijk} = \beta_0 + \beta_1 z_j + \beta_2 a_k
+ + u_j + v_k + e_{ijk} \; ,
+\]</span></p>
+<p>where <span class="math inline">\(u_j\)</span> and <span class="math inline">\(v_k\)</span> denote random effects for subjects and items, respectively.
+The model can be illustrated like this.</p>
+<p><img src="/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/unnamed-chunk-14-1.png" width="537.6" /></p>
+<p>You can see that this model is relatively simple because it does not contain aggregated variables.<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>
+Nonetheless, it allows for (a) an effect of the experimental condition at the item level, (b) relations with the covariate at the person level, and (c) residual variance in the outcome at the level of items, subjects, and responses (i.e., in the interaction of items and subjects).</p>
+<p>Notice how there is no “third” level in this model.
+Instead, the “top” level includes both subjects and items, which are not further nested in one another.</p>
+<div id="example-data-1" class="section level3">
+<h3>Example data</h3>
+<p>For this example, I simulated data with a cross-classified structure and a total of <span class="math inline">\(n\)</span> = 5000 responses (level 1) from 100 subjects (level 2b) to 50 items (level 2a).
+The experimental condition (<span class="math inline">\(a\)</span> = 1) comprised all even-numbered items; the control (<span class="math inline">\(a\)</span> = 0) all the odd-numbered items.
+The data can be downloaded here (<a href="/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_cc.csv">CSV</a>, <a href="/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_cc.Rdata">Rdata</a>).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:right;">
+item
+</th>
+<th style="text-align:right;">
+subject
+</th>
+<th style="text-align:right;">
+y
+</th>
+<th style="text-align:right;">
+a
+</th>
+<th style="text-align:right;">
+z
+</th>
+</tr>
+</thead>
+<tbody>
+<tr grouplength="3">
+<td colspan="5" style="border-bottom: none; display: none;">
+<strong></strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0.263
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+-1.18
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+2
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2.029
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-1.18
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+-1.18
+</td>
+</tr>
+<tr grouplength="3">
+<td colspan="1" style="border-bottom: none; text-align: right;">
+<strong>…</strong>
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+48
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+0.285
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-1.32
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+49
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+-1.781
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+-1.32
+</td>
+</tr>
+<tr>
+<td style="text-align:right; padding-left: 2em;" indentlevel="1">
+50
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+-0.202
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+-1.32
+</td>
+</tr>
+</tbody>
+</table>
+<p>Some of the responses (<span class="math inline">\(y\)</span>) are sporadically missing. In addition, a number of subjects failed to provide data on the subject-level covariate (<span class="math inline">\(z\)</span>).</p>
+</div>
+<div id="multiple-imputation-1" class="section level3">
+<h3>Multiple imputation</h3>
+<p>The main strategy for MI remains the same as in the previous example.
+In order to accommodate the multilevel structure, we again need to ensure that the imputation model allows for the variables to have variance and relations with each other at different levels, with the exception that aggregated variables are not used here (see Footnote <a href="#fn1">1</a>).</p>
+<p>We again start with the default setup and adjust it as we need to.</p>
+<pre class="r"><code># create default predictor matrix and imputation methods
+predMatrix &lt;- make.predictorMatrix(data = dat)
+impMethod &lt;- make.method(data = dat)</code></pre>
+<div id="setting-up-imputation-models-1" class="section level4">
+<h4>Setting up imputation models</h4>
+<p>In this example, only <code>y</code> and <code>z</code> contain missing data.
+For the lower-level variable <code>y</code> we again use the <code>ml.lmer</code> method.
+For <code>z</code>, we use <code>2lonly.norm</code> because it is located at the “top” of the hierarchy (despite it not being there alone).<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
+<pre class="r"><code># method for lower-level variables (y)
+impMethod[&quot;y&quot;] &lt;- &quot;ml.lmer&quot;
+
+# ... for variables at top level (z)
+impMethod[&quot;z&quot;] &lt;- &quot;2lonly.norm&quot;</code></pre>
+<p>To set up these methods, we begin by removing the cluster indicators from the predictor matrix.</p>
+<pre class="r"><code># remove indicator variables from set of predictors
+predMatrix[, c(&quot;subject&quot;, &quot;item&quot;)] &lt;- 0</code></pre>
+<p>For variables imputed with <code>2lonly.norm</code>, the hierarchical structure is then specified in the predictor matrix by setting its cluster indicator to <code>-2</code>.
+The cluster indicator for <code>z</code> is <code>subject</code>.</p>
+<pre class="r"><code># specify cluster indicator (2lonly.norm)
+predMatrix[&quot;z&quot;, &quot;subject&quot;] &lt;- -2</code></pre>
+<p>For variables imputed with <code>ml.lmer</code>, the setup again requires a few extra arguments.
+Specifically, we need to specify (a) the level at which the higher-level variables (<code>a</code> and <code>z</code>) are measured and (b) the cluster variables that define the clustered structure in the imputation model of <code>y</code>.</p>
+<pre class="r"><code># specify levels of higher-level variables
+level &lt;- character(ncol(dat))
+names(level) &lt;- colnames(dat)
+
+level[&quot;a&quot;] &lt;- &quot;item&quot;
+level[&quot;z&quot;] &lt;- &quot;subject&quot;
+
+# specify cluster indicators (as list)
+cluster &lt;- list()
+
+cluster[[&quot;y&quot;]] &lt;- c(&quot;subject&quot;, &quot;item&quot;)</code></pre>
+<p>Recall that <code>ml.lmer</code> and <code>2lonly.norm</code> automatically calculate and include any aggregated variables in every step of the imputation.
+However, in this cross-classified design these aggregates turn out to be constant because every person responds to every item (see Footnote <a href="#fn1">1</a>).
+For this reason, the aggregates need to be removed from the imputation model.</p>
+<p>For variables imputed with <code>2lonly.norm</code>, we can do this by removing variables from the predictor matrix.
+For <code>z</code>, we remove <code>a</code> from the set of predictors such that <code>z</code> is only predicted by the subject level aggregate of <code>y</code> (but not <code>a</code>).</p>
+<pre class="r"><code># remove effect of (average) a on z
+predMatrix[&quot;z&quot;, &quot;a&quot;] &lt;- 0</code></pre>
+<p>For variables imputed with <code>ml.lmer</code>, this is not done in the predictor matrix but with a global argument when running the imputation.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+</div>
+<div id="imputation-1" class="section level4">
+<h4>Imputation</h4>
+<p>To start the imputation, we run <code>mice</code> as follows.
+To turn off the automatic aggregation of variables for <code>ml.lmer</code>, I also set the argument <code>aggregate_automatically = FALSE</code>.</p>
+<pre class="r"><code># run mice
+imp &lt;- mice(dat, method = impMethod, predictorMatrix = predMatrix, maxit = 20, 
+            m = 20, levels_id = cluster, variables_levels = level,
+            aggregate_automatically = FALSE)</code></pre>
+</div>
+</div>
+<div id="example-analysis-1" class="section level3">
+<h3>Example analysis</h3>
+<p>The analysis of the data is done with <code>lme4</code> and <code>mitml</code> as before.
+First, we extract the imputed data sets as a list.</p>
+<pre class="r"><code># create list of imputed data sets
+implist &lt;- mids2mitml.list(imp)</code></pre>
+<p>Then we fit the analysis model with <code>lme4</code> and pool the results with <code>mitml</code>.</p>
+<pre class="r"><code># fit model
+fit &lt;- with(implist,{
+  lmer(y ~ 1 + a + z + (1|item) + (1|subject))
+})
+
+# pool results
+testEstimates(fit, var.comp = TRUE)</code></pre>
+<pre><code># 
+# Call:
+# 
+# testEstimates(model = fit, var.comp = TRUE)
+# 
+# Final parameter estimates and inferences obtained from 20 imputed data sets.
+# 
+#                Estimate   Std.Error     t.value          df     P(&gt;|t|)         RIV         FMI 
+# (Intercept)      -0.148       0.106      -1.394   57324.620       0.163       0.019       0.018 
+# a                 0.656       0.124       5.292 2789469.379       0.000       0.003       0.003 
+# z                -0.252       0.075      -3.368     210.939       0.001       0.429       0.307 
+# 
+#                              Estimate 
+# Intercept~~Intercept|subject    0.340 
+# Intercept~~Intercept|item       0.187 
+# Residual~~Residual              0.460 
+# 
+# Unadjusted hypothesis test as appropriate in larger samples.</code></pre>
+<p>The results are again close to the true values I used to generate the data.</p>
+</div>
+</div>
+<div id="final-remarks" class="section level2">
+<h2>Final remarks</h2>
+<p>In two examples, I showed how to conduct MI for three-level and cross-classified data in R.
+In both cases, the hierarchical structure of the data and the relations that exist between variables at different levels of the structure have to be taken into account in the imputation model.
+This ensures that the imputations are in line with the posited structure of the data, without which MI might lead to biased results.
+We saw that this requires that we (a) choose appropriate imputation methods for hierarchical data (e.g., those in <code>mice</code> and <code>miceadds</code>) and (b) include aggregated versions of variables into the imputation model.</p>
+<p>Notice that, although the two types of hierarchical data are very different, the ideas for treating missing data therein were similar.
+This is because, the random effects used to represent the hierarchical structure are <em>additive</em> in both cases.
+In fact, the same techniques can be used to treat missing data in any application where that is the case (e.g., nested data with four or more levels, more complex cross-classification, or a combination of the two).</p>
+<p>The examples presented here used simulated continuous data.
+Similar methods are available for binary, ordinal, and (to some extent) polytomous data.</p>
+</div>
+<div id="further-reading" class="section level2">
+<h2>Further reading</h2>
+<ul>
+<li><a href="#Enders2016">Enders, Mistler, and Keller (2016)</a> and <a href="#Ludtke2017">Lüdtke, Robitzsch, and Grund (2017)</a> provide a general introduction to missing data and MI in hierarchical data with an emphasis on two-level data.</li>
+<li>Further examples for the imputation of three-level data with <code>mice</code> and <code>miceadds</code> can be found in the <a href="https://cran.r-project.org/web/packages/miceadds/miceadds.pdf">documentation</a> of the <code>miceadds</code> package.</li>
+<li>The Blimp software (<a href="#Keller2018">Keller &amp; Enders, 2018</a>) also supports MI for three-level data with some examples shown <a href="http://www.appliedmissingdata.com/multilevel-imputation.html">here</a>.</li>
+</ul>
+</div>
+<div id="bib" class="section level2">
+<h2>References</h2>
+<ul class="bibliography">
+<li id="Enders2016">
+Enders, C. K., Mistler, S. A., &amp; Keller, B. T. (2016). Multilevel multiple imputation: A review and evaluation of joint modeling and chained equations imputation. <i>Psychological Methods</i>, <i>21</i>, 222–240. <a href="https://doi.org/10.1037/met0000063">doi:10.1037/met0000063</a>
+</li>
+<li id="Keller2018">
+Keller, B. T., &amp; Enders, C. K. (2018). <i>Blimp Software Manual (Version 1.1)</i>.
+</li>
+<li id="Ludtke2017">
+Lüdtke, O., Robitzsch, A., &amp; Grund, S. (2017). Multiple imputation of missing data in multilevel designs: A comparison of different strategies. <i>Psychological Methods</i>, <i>22</i>, 141–165. <a href="https://doi.org/10.1037/met0000096">doi:10.1037/met0000096</a>
+</li>
+<li id="vanBuuren2011">
+van Buuren, S., &amp; Groothuis-Oudshoorn, K. (2011). MICE: Multivariate imputation by chained equations in R. <i>Journal of Statistical Software</i>, <i>45</i>(3), 1–67. <a href="https://doi.org/10.18637/jss.v045.i03">doi:10.18637/jss.v045.i03</a>
+</li>
+</ul>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>In the present case, aggregating <span class="math inline">\(a\)</span> and <span class="math inline">\(z\)</span> is not useful, because all items are answered by all subjects, so that the aggregates of <span class="math inline">\(a\)</span> at the person level and <span class="math inline">\(z\)</span> at the item level are constant (e.g., every person responds to the same number of items in the experimental and control condition).
+However, aggregated variables can still play a role in cross-classified data.
+For example, there can be other variables at level 1 (e.g., a covariate providing information about individual trials) or the experimental manipulation may be applied at level 1 (e.g., if it is applied randomly to items on a trial-by-trial basis).
+In such a case, the aggregated of these variables would <em>not</em> be constant and may need to be taken into account during MI.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>If the item-level variable <span class="math inline">\(a\)</span> also had missing data, we would treat it the same way (i.e., with <code>2lonly.norm</code>) but specify a different cluster indicator in the predictor matrix (i.e., <code>item</code>).</p>
+<pre class="r"><code># specify imputation method
+impMethod[&quot;a&quot;] &lt;- &quot;2lonly.norm&quot;
+
+# specify cluster indicator
+predMatrix[&quot;a&quot;, &quot;item&quot;] &lt;- -2</code></pre>
+<p>This is not needed here because <code>a</code> has no missing data.<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn3"><p>If there are that need to be aggregated (e.g., other variables at level 1), then the aggregation needs to be done “by hand”, either by calculating the aggregated variables beforehand (if the variables are completely observed) or by using “passive imputation” (if they are incomplete).<a href="#fnref3" class="footnote-back">↩</a></p></li>
+</ol>
+</div>
+
+  
+    <p class="post-tags">
+    tags: 
+      <a href="/tags/r">[r]</a>
+      <a href="/tags/missing-data">[missing data]</a>
+      <a href="/tags/multiple-imputation">[multiple imputation]</a>
+      <a href="/tags/multilevel">[multilevel]</a></p>
+  
+</div>
+
+<h2>Comments</h2> 
+<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "website-axqxs6xsco" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+    </div>
+
+    
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-112035746-1', 'auto');
+	
+	ga('send', 'pageview');
+}
+</script>
+<script async src='https://www.google-analytics.com/analytics.js'></script>
+
+  </body>
+</html>

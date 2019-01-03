@@ -1,7 +1,7 @@
 ---
 title: 'Dealing with missing data in ANOVA models'
 date: 2018-06-25
-tags: [ "missing data", "multiple imputation", "anova" ]
+tags: [ "r", "missing data", "multiple imputation", "anova" ]
 thumbnail: "thumbnail-1.png"
 draft: false
 ---

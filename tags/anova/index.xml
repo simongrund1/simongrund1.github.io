@@ -17,9 +17,400 @@
       <pubDate>Mon, 25 Jun 2018 00:00:00 +0000</pubDate>
       
       <guid>https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets/</guid>
-      <description>The analysis of variance, or ANOVA, is among the most popular methods for analyzing how an outcome variable differs between groups, for example, in observational studies or in experiments with different conditions.
-But how do we conduct the ANOVA when there are missing data? In this post, I show how to deal with missing data in between- and within-subject designs using multiple imputation (MI) in R.
-The ANOVA model In the one-factorial ANOVA, the goal is to investigate whether two or more groups differ with respect to some outcome variable \(y\).</description>
+      <description>
+
+
+&lt;p&gt;The analysis of variance, or ANOVA, is among the most popular methods for analyzing how an outcome variable differs between groups, for example, in observational studies or in experiments with different conditions.&lt;/p&gt;
+&lt;p&gt;But how do we conduct the ANOVA when there are missing data?
+In this post, I show how to deal with missing data in between- and within-subject designs using multiple imputation (MI) in &lt;a href=&#34;https://www.r-project.org/&#34;&gt;R&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;the-anova-model&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The ANOVA model&lt;/h2&gt;
+&lt;p&gt;In the one-factorial ANOVA, the goal is to investigate whether two or more groups differ with respect to some outcome variable &lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt;.
+The statistical model can be written as&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\begin{equation} \label{model}
+y_{ij} = \mu_j + e_{ij} \; ,
+\end{equation}
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;where &lt;span class=&#34;math inline&#34;&gt;\(y_{ij}\)&lt;/span&gt; denotes the value of &lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt; for person &lt;span class=&#34;math inline&#34;&gt;\(i\)&lt;/span&gt; in group &lt;span class=&#34;math inline&#34;&gt;\(j\)&lt;/span&gt;, and &lt;span class=&#34;math inline&#34;&gt;\(\mu_j\)&lt;/span&gt; is the mean in group &lt;span class=&#34;math inline&#34;&gt;\(j\)&lt;/span&gt;.
+The (omnibus) null hypothesis of the ANOVA states that all groups have identical population means.
+For three groups, this would mean that&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\begin{equation}
+\mu_1 = \mu_2 = \mu_3 \; .
+\end{equation}
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;This hypothesis is tested by looking at whether the differences between groups are larger than what could be expected from the differences within groups.
+If this is the case, then we reject the null, and the group means are said to be “significantly” different from one another.&lt;/p&gt;
+&lt;p&gt;In the following, we will look at how this hypothesis can be tested when the outcome variable contains missing data.
+Let’s illustrate this with an example.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;example-1-between-subjects-anova&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Example 1: between-subjects ANOVA&lt;/h2&gt;
+&lt;p&gt;For this example, I simulated some data according to a between-subject design with three groups, &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; = 50 subjects per group, and a “medium” effect size of &lt;span class=&#34;math inline&#34;&gt;\(f\)&lt;/span&gt; = .25, which roughly corresponds to an &lt;span class=&#34;math inline&#34;&gt;\(R^2=6.8\%\)&lt;/span&gt; &lt;a href=&#34;#Cohen1988&#34;&gt;(Cohen, 1988)&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;You can download the data from this post if you want to reproduce the results (&lt;a href=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/example1.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/example1.Rdata&#34;&gt;Rdata&lt;/a&gt;). Here are the first few rows.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;group&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;y&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;x&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;A&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.715&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.062&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;B&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.120&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.633&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;C&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.341&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.176&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;A&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;NA&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.792&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;B&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.468&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.243&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The three variables mean the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;group&lt;/code&gt;: the grouping variable&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;y&lt;/code&gt;: the outcome variable (with 20.7% missing data)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;x&lt;/code&gt;: an additional covariate&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In this example, cases with lower values in &lt;code&gt;x&lt;/code&gt; had a higher chance of missing data in &lt;code&gt;y&lt;/code&gt;.
+Because &lt;code&gt;x&lt;/code&gt; is also positively correlated with &lt;code&gt;y&lt;/code&gt;, this means that smaller &lt;code&gt;y&lt;/code&gt; values are missing more often than larger ones.&lt;/p&gt;
+&lt;div id=&#34;listwise-deletion&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Listwise deletion&lt;/h3&gt;
+&lt;p&gt;Lets see what happens if we run the ANOVA only with those cases that have &lt;code&gt;y&lt;/code&gt; observed (i.e., listwise deletion). This is the standard setting on most statistical software.&lt;/p&gt;
+&lt;p&gt;In R, the ANOVA can be conducted with the &lt;code&gt;lm()&lt;/code&gt; function as follows.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# fit the ANOVA model
+fit1 &amp;lt;- lm(y ~ 1 + group, data = dat)
+summary(fit1)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;# 
+# Call:
+# lm(formula = y ~ 1 + group, data = dat)
+# 
+# Residuals:
+#     Min      1Q  Median      3Q     Max 
+# -1.8196 -0.6237 -0.0064  0.5657  2.1808 
+# 
+# Coefficients:
+#             Estimate Std. Error t value Pr(&amp;gt;|t|)
+# (Intercept)   0.0944     0.1452    0.65     0.52
+# groupB        0.1720     0.1972    0.87     0.38
+# groupC       -0.1570     0.2082   -0.75     0.45
+# 
+# Residual standard error: 0.895 on 116 degrees of freedom
+#   (31 observations deleted due to missingness)
+# Multiple R-squared:  0.0229,  Adjusted R-squared:  0.00609 
+# F-statistic: 1.36 on 2 and 116 DF,  p-value: 0.26&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In this example, the &lt;span class=&#34;math inline&#34;&gt;\(F\)&lt;/span&gt;-test at the bottom of the output indicates that the group means are &lt;em&gt;not&lt;/em&gt; significantly different from one another, &lt;span class=&#34;math inline&#34;&gt;\(F(\!\)&lt;/span&gt; 2, 116 &lt;span class=&#34;math inline&#34;&gt;\(\!)\)&lt;/span&gt; = 1.361 (&lt;span class=&#34;math inline&#34;&gt;\(p\)&lt;/span&gt; = 0.26).&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;
+In addition, the effect size (&lt;span class=&#34;math inline&#34;&gt;\(R^2\)&lt;/span&gt; = 0.023) is quite a bit smaller than what was used to generate the data.&lt;/p&gt;
+&lt;p&gt;In fact, this result is a direct consequence of how the missing data were simulated.
+Fortunately, there are statistical methods that can account for the missing data and help us obtain more trustworthy results.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;multiple-imputation&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Multiple imputation&lt;/h3&gt;
+&lt;p&gt;One of the most effective ways of dealing with missing data is multiple imputation (MI).
+Using MI, we can create multiple plausible replacements of the missing data, given what we have observed and a statistical model (the imputation model).&lt;/p&gt;
+&lt;p&gt;In the ANOVA, using MI has the additional benefit that it allows taking covariates into account that are relevant for the missing data but not for the analysis.
+In this example, &lt;code&gt;x&lt;/code&gt; is a direct cause of missing data in &lt;code&gt;y&lt;/code&gt;. Therefore, we must take &lt;code&gt;x&lt;/code&gt; into account when making inferences about &lt;code&gt;y&lt;/code&gt; in the ANOVA.&lt;/p&gt;
+&lt;p&gt;Running MI consists of three steps. First, the missing data are imputed multiple times. Second, the imputed data sets are analyzed separately. Third, the parameter estimates and hypothesis tests are &lt;em&gt;pooled&lt;/em&gt; to form a final set of estimates and inferences.&lt;/p&gt;
+&lt;p&gt;For this example, we will use the &lt;a href=&#34;https://cran.r-project.org/package=mice&#34;&gt;&lt;code&gt;mice&lt;/code&gt;&lt;/a&gt; and &lt;a href=&#34;https://cran.r-project.org/package=mitml&#34;&gt;&lt;code&gt;mitml&lt;/code&gt;&lt;/a&gt; packages to conduct MI.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(mice)
+library(mitml)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Specifying an imputation model is very simple here. With the following command, we generate 100 imputations for &lt;code&gt;y&lt;/code&gt; on the basis of a regression model with both &lt;code&gt;group&lt;/code&gt; and &lt;code&gt;x&lt;/code&gt; as predictors and a normal error term.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# run MI
+imp &amp;lt;- mice(data = dat, method = &amp;quot;norm&amp;quot;, m = 100)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The imputed data sets can then be saved as a list, containing 100 copies of the original data, in which the missing data have been replaced by different imputations.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# create a list of completed data sets
+implist &amp;lt;- mids2mitml.list(imp)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, we fit the ANOVA model to each of the imputed data sets and pool the results.
+The analysis part is done with the &lt;code&gt;with()&lt;/code&gt; command, which applies the same linear model, &lt;code&gt;lm()&lt;/code&gt;, to each data set.
+The pooling es then done with the &lt;code&gt;testEstimates()&lt;/code&gt; function.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# fit the ANOVA model
+fit2 &amp;lt;- with(implist, lm(y ~ 1 + group))
+
+# pool the parameter estimates
+testEstimates(fit2)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;# 
+# Call:
+# 
+# testEstimates(model = fit2)
+# 
+# Final parameter estimates and inferences obtained from 100 imputed data sets.
+# 
+#              Estimate Std.Error   t.value        df   P(&amp;gt;|t|)       RIV       FMI 
+# (Intercept)     0.027     0.144     0.190  3178.456     0.850     0.214     0.177 
+# groupB          0.207     0.198     1.044  5853.312     0.297     0.149     0.130 
+# groupC         -0.333     0.208    -1.600  2213.214     0.110     0.268     0.212 
+# 
+# Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Notice that we did not need to actually include &lt;code&gt;x&lt;/code&gt; in the ANOVA.
+Rather, it was enough to include &lt;code&gt;x&lt;/code&gt; in the imputation model, after which the analyses proceeded as usual.&lt;/p&gt;
+&lt;p&gt;We now have estimated the regression coefficients in the ANOVA model (i.e., the differences between group means), but we have yet to decide whether the means are all equal or not.
+To this end, we use a pooled version of the &lt;span class=&#34;math inline&#34;&gt;\(F\)&lt;/span&gt;-test above, which consists of a comparison of the full model (the ANOVA model) with a reduced model that does not contain the coefficients we wish to test.&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;In this case, we wish to test the coefficients pertaining to the differences between groups, so the reduced model does not contain &lt;code&gt;group&lt;/code&gt; as a predictor.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# fit the reduced ANOVA model (without &amp;#39;group&amp;#39;)
+fit2.reduced &amp;lt;- with(implist, lm(y ~ 1))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The full and the reduced model can then be compared with the pooled version of the &lt;span class=&#34;math inline&#34;&gt;\(F\)&lt;/span&gt;-test (i.e., the Wald test), which is known in the literature as &lt;span class=&#34;math inline&#34;&gt;\(D_1\)&lt;/span&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# compare the two models with pooled Wald test
+testModels(fit2, fit2.reduced, method = &amp;quot;D1&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;# 
+# Call:
+# 
+# testModels(model = fit2, null.model = fit2.reduced, method = &amp;quot;D1&amp;quot;)
+# 
+# Model comparison calculated from 100 imputed data sets.
+# Combination method: D1 
+# 
+#     F.value      df1      df2    P(&amp;gt;F)      RIV 
+#       3.635        2 7186.601    0.026    0.195 
+# 
+# Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In contrast with listwise deletion, the &lt;span class=&#34;math inline&#34;&gt;\(F\)&lt;/span&gt;-test under MI indicates that the groups &lt;em&gt;are&lt;/em&gt; significantly different from one another.&lt;/p&gt;
+&lt;p&gt;This is because MI makes use of all the observed data, including the covariate &lt;code&gt;x&lt;/code&gt;, and used this information to generated replacements for missing &lt;code&gt;y&lt;/code&gt; that took its relation with &lt;code&gt;x&lt;/code&gt; into account.
+To see this, it is worth looking at a comparison of the observed and the imputed data.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/figure-html/thumbnail-1.png&#34; width=&#34;691.2&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The difference is not extreme, but it is easy to see that the imputed data tend to have more mass at the lower end of the distribution of &lt;code&gt;y&lt;/code&gt; (especially in groups A and C).&lt;/p&gt;
+&lt;p&gt;This is again a result of how the data were simulated: Lower &lt;code&gt;y&lt;/code&gt; values, through their relation with &lt;code&gt;x&lt;/code&gt;, are missing more often, which is accounted for using MI.
+Conversely, using listwise deletion placed the group means more closely together than they should be, and this affected the results in the ANOVA.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;example-2-mixedwithin-subjects-anova&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Example 2: mixed/within-subjects ANOVA&lt;/h2&gt;
+&lt;p&gt;In a within-subjects design, the design factor varies within (not between) persons, and we obtain multiple, repeated measurements for each condition (mixed designs include both).
+Fortunately, the procedure for the treatment and missing data and the analysis remains mostly the same.&lt;/p&gt;
+&lt;p&gt;Although within-subjects designs are analyzed most often with the repeated-measures ANOVA, mixed-effects models have become a popular alternative. Here, I will choose the latter because mixed-effects models make it straightforward to pool ANOVA-like hypotheses in within-subjects designs.&lt;/p&gt;
+&lt;p&gt;To fit the mixed-effects model, we will use the &lt;code&gt;lmer()&lt;/code&gt; function from the package &lt;a href=&#34;https://cran.r-project.org/package=lme4&#34;&gt;&lt;code&gt;lme4&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(lme4)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I simulated a second data set similar to the one above, with &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; = 20 persons, a within-subject factor with three conditions, and five repeated measurements for each condition (&lt;a href=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/example2.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/example2.Rdata&#34;&gt;Rdata&lt;/a&gt;).&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;id&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;cond&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;y&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;x&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;A&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.699&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;B&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.022&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;C&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.287&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;A&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.588&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;B&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-2.028&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-1.11&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;The variables mean the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;id&lt;/code&gt;: the subject identifier&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;cond&lt;/code&gt;: the grouping variable (within subjects)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;y&lt;/code&gt;: the repeated measurements for the outcome variable (with 18.7% missing data)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;x&lt;/code&gt;: a subject-specific covariate&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Like above, persons with lower values in &lt;code&gt;x&lt;/code&gt; had a higher chance of missing data in &lt;code&gt;y&lt;/code&gt;. Notice that &lt;code&gt;cond&lt;/code&gt; varies within subjects, making the repeated measures for each condition “nested” within subjects.&lt;/p&gt;
+&lt;div id=&#34;multiple-imputation-1&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Multiple imputation&lt;/h3&gt;
+&lt;p&gt;To properly accommodate the “nested” structure of the repeated measurements, the imputation model can no longer be a simple regression.
+Instead, it needs to accommodate this structure by also employing a mixed-effects model.
+Specifying this model is easiest by first initializing the imputation model with the default values.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# run MI (for starting solution)
+ini &amp;lt;- mice(data = dat, maxit = 0)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Then we define the subject identifier for the imputation model (&lt;code&gt;id&lt;/code&gt;) and change the imputation method to a use a mixed-effects model (&lt;code&gt;&#34;2l.pan&#34;&lt;/code&gt;).
+Running MI is then the same as before.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# define the &amp;#39;subject&amp;#39; identifier (code as &amp;#39;-2&amp;#39; in predictor matrix)
+pred &amp;lt;- ini$pred
+pred[&amp;quot;y&amp;quot;, &amp;quot;id&amp;quot;] &amp;lt;- -2
+
+# run MI
+imp &amp;lt;- mice(data = dat, pred = pred, method = &amp;quot;2l.pan&amp;quot;, m = 100)
+summary(imp)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The list of imputed data sets is generated as above.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# create a list of completed data sets
+implist &amp;lt;- mids2mitml.list(imp)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The ANOVA model is then fit using &lt;code&gt;lmer()&lt;/code&gt;.
+Notice that this model contains an additional term, &lt;code&gt;(1|id)&lt;/code&gt;, which specifies a random effect for each subject.
+This effect captures unsystematic differences between subjects, thus accounting for the nested structure of the repeated-measures data.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# fit the ANOVA model
+fit3 &amp;lt;- with(implist, lmer(y ~ 1 + cond + (1|id)))
+testEstimates(fit3, var.comp = TRUE)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;# 
+# Call:
+# 
+# testEstimates(model = fit3, var.comp = TRUE)
+# 
+# Final parameter estimates and inferences obtained from 100 imputed data sets.
+# 
+#               Estimate  Std.Error    t.value         df    P(&amp;gt;|t|)        RIV        FMI 
+# (Intercept)     -0.065      0.227     -0.286 108243.160      0.775      0.031      0.030 
+# condB            0.352      0.112      3.151   3197.566      0.002      0.214      0.176 
+# condC            0.048      0.114      0.418   2120.953      0.676      0.276      0.217 
+# 
+#                         Estimate 
+# Intercept~~Intercept|id    0.893 
+# Residual~~Residual         0.514 
+# ICC|id                     0.635 
+# 
+# Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The output is similar to before, with the regression coefficients denoting the differences between the conditions. In addition, the output includes the variance of the random effect that denotes the unsystematic differences between subjects.&lt;/p&gt;
+&lt;p&gt;Testing the null hypothesis of the ANOVA again requires the specification of a reduced model that does not contain the parameters to be tested (i.e., those pertaining to &lt;code&gt;cond&lt;/code&gt;).&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# pool the parameter estimates
+fit3.reduced &amp;lt;- with(implist, lmer(y ~ 1 + (1|id)))
+testModels(fit3, fit3.reduced, method = &amp;quot;D1&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;# 
+# Call:
+# 
+# testModels(model = fit3, null.model = fit3.reduced, method = &amp;quot;D1&amp;quot;)
+# 
+# Model comparison calculated from 100 imputed data sets.
+# Combination method: D1 
+# 
+#     F.value      df1      df2    P(&amp;gt;F)      RIV 
+#       5.681        2 4847.199    0.003    0.248 
+# 
+# Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As in the first example, the three conditions are significantly different from one another.&lt;/p&gt;
+&lt;p&gt;These two examples were obviously very simple.
+However, the same general procedure can be used for more complex ANOVA models, including models with two or more factors, interaction effects, or for mixed designs with both between- and within-subject factors.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;procedures-other-than-mi&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Procedures other than MI&lt;/h2&gt;
+&lt;p&gt;Imputation is not the only method that can deal with missing data, and other methods like maximum-likelihood estimation (ML) have also been recommended (&lt;a href=&#34;#Schafer2002&#34;&gt;Schafer &amp;amp; Graham, 2002&lt;/a&gt;).
+Using ML, cases contribute to the estimation of the model only to the extent to which they have data, and its results are often equally trustworthy as those under MI.&lt;/p&gt;
+&lt;p&gt;However, in the ANOVA, this should be taken with a grain of salt.
+For missing data in the outcome variable &lt;code&gt;y&lt;/code&gt;, using ML simply means that the model is estimated using only the cases with observed &lt;code&gt;y&lt;/code&gt; (i.e., listwise deletion), which can lead to distorted parameter estimates if other variables are related to the chance of observing &lt;code&gt;y&lt;/code&gt; (see Example 1).
+In order to account for this, ML requires including these extra variables in the analysis model, which changes the meaning of the parameters (i.e., the ANOVA becomes ANCOVA, though the estimates for it &lt;em&gt;would&lt;/em&gt; be unbiased!).&lt;/p&gt;
+&lt;p&gt;One key advantage of MI is that the treatment of missing data is independent of the analysis.
+Variables relevant for the treatment of missing data can be included in the imputation model without altering the analysis model.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;further-reading&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Further reading&lt;/h2&gt;
+&lt;p&gt;To read more about ANOVA models and the treatment of missing data therein, you can check the following resources:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#Maxwell2018&#34;&gt;Maxwell, Delaney, and Kelley (2018)&lt;/a&gt; give a great introduction into the design and analysis of experimental data with the ANOVA and mixed-effects models&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#vanGinkel2014&#34;&gt;van Ginkel and Kroonenberg (2014)&lt;/a&gt; provide a detailed discussion of missing data and MI in the ANOVA with examples, syntax files, and a macro for SPSS&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#Grund2016&#34;&gt;Grund, Lüdtke, and Robitzsch (2016)&lt;/a&gt; provide a comparison of different methods for testing hypotheses in the ANOVA under MI&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#Liu2017&#34;&gt;Liu and Enders (2017)&lt;/a&gt; provide a similar comparison in the context of regression analyses&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bib&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;ul class=&#34;bibliography&#34;&gt;
+&lt;li id=&#34;Cohen1988&#34;&gt;
+Cohen, J. (1988). &lt;i&gt;Statistical power analysis for the behavioral sciences&lt;/i&gt; (2nd ed.). Hillsdale, NJ: Erlbaum.
+&lt;/li&gt;
+&lt;li id=&#34;Grund2016&#34;&gt;
+Grund, S., Lüdtke, O., &amp;amp; Robitzsch, A. (2016). Pooling ANOVA results from multiply imputed datasets: A simulation study. &lt;i&gt;Methodology&lt;/i&gt;, &lt;i&gt;12&lt;/i&gt;, 75–88. &lt;a href=&#34;https://doi.org/10.1027/1614-2241/a000111&#34;&gt;doi:10.1027/1614-2241/a000111&lt;/a&gt;
+&lt;/li&gt;
+&lt;li id=&#34;Liu2017&#34;&gt;
+Liu, Y., &amp;amp; Enders, C. K. (2017). Evaluation of multi-parameter test statistics for multiple imputation. &lt;i&gt;Multivariate Behavioral Research&lt;/i&gt;, &lt;i&gt;52&lt;/i&gt;, 371–390. &lt;a href=&#34;https://doi.org/10.1080/00273171.2017.1298432&#34;&gt;doi:10.1080/00273171.2017.1298432&lt;/a&gt;
+&lt;/li&gt;
+&lt;li id=&#34;Maxwell2018&#34;&gt;
+Maxwell, S. E., Delaney, H. D., &amp;amp; Kelley, K. (2018). &lt;i&gt;Designing experiments and analyzing data: A model comparison perspective&lt;/i&gt; (3rd ed.). Mahwah, NJ: Erlbaum.
+&lt;/li&gt;
+&lt;li id=&#34;Schafer2002&#34;&gt;
+Schafer, J. L., &amp;amp; Graham, J. W. (2002). Missing data: Our view of the state of the art. &lt;i&gt;Psychological Methods&lt;/i&gt;, &lt;i&gt;7&lt;/i&gt;, 147–177. &lt;a href=&#34;https://doi.org/10.1037//1082-989X.7.2.147&#34;&gt;doi:10.1037//1082-989X.7.2.147&lt;/a&gt;
+&lt;/li&gt;
+&lt;li id=&#34;vanGinkel2014&#34;&gt;
+van Ginkel, J. R., &amp;amp; Kroonenberg, P. M. (2014). Analysis of variance of multiply imputed data. &lt;i&gt;Multivariate Behavioral Research&lt;/i&gt;, &lt;i&gt;49&lt;/i&gt;, 78–91. &lt;a href=&#34;https://doi.org/10.1080/00273171.2013.855890&#34;&gt;doi:10.1080/00273171.2013.855890&lt;/a&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&#34;footnotes&#34;&gt;
+&lt;hr /&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;The hypothesis test in ANOVA is a Wald test that simultaneously tests all the differences between groups against zero. In this example, these differences are represented by the regression coefficients for &lt;code&gt;groupB&lt;/code&gt; and &lt;code&gt;groupC&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This can easily be verified by calculating the Wald test by hand:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# estimates and covariance matrix
+b &amp;lt;- coef(fit1)[-1]
+V &amp;lt;- vcov(fit1)[-1,-1]
+
+# Wald-test
+F &amp;lt;- b %*% solve(V) %*% b / 2      # F statistic
+pf(F, 2, 116, lower.tail = FALSE)  # p value&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;#      [,1]
+# [1,] 0.26&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The resulting &lt;span class=&#34;math inline&#34;&gt;\(F\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(p\)&lt;/span&gt; value are exactly the same as in the output above.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Technically, a reduced model is not necessary (only convenient). The Wald test can be formulated equivalently with a linear constraint on the parameters of the full model (i.e., setting them to zero).&lt;/p&gt;
+&lt;p&gt;Under MI, this can be done, too, with the &lt;code&gt;testConstraints()&lt;/code&gt; function:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# define and test parameter constraints
+con &amp;lt;- c(&amp;quot;groupB&amp;quot;, &amp;quot;groupC&amp;quot;)
+testConstraints(fit2, constraints = con, method = &amp;quot;D1&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;# 
+# Call:
+# 
+# testConstraints(model = fit2, constraints = con, method = &amp;quot;D1&amp;quot;)
+# 
+# Hypothesis test calculated from 100 imputed data sets. The following
+# constraints were specified:
+# 
+#              Estimate Std. Error 
+#    groupB:      0.207      0.202 
+#    groupC:     -0.333      0.202 
+# 
+# Combination method: D1 
+# 
+#     F.value      df1      df2    P(&amp;gt;F)      RIV 
+#       3.635        2 7186.601    0.026    0.195 
+# 
+# Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The results of this are identical to those of &lt;code&gt;testModels()&lt;/code&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+</description>
     </item>
     
   </channel>

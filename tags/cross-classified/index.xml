@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Simon Grund [Cross Classified]</title>
+    <link>/tags/cross-classified/</link>
+    <description>Recent content on Simon Grund [Cross Classified]</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 31 Dec 2018 00:00:00 +0000</lastBuildDate>
+    
+        <atom:link href="/tags/cross-classified/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Multiple imputation for three-level and cross-classified data</title>
+      <link>/posts/multiple-imputation-for-three-level-and-cross-classified-data/</link>
+      <pubDate>Mon, 31 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/multiple-imputation-for-three-level-and-cross-classified-data/</guid>
+      <description>Multiple imputation (MI) of missing values in hierarchical data can be tricky, especially when the data do not have a simple two-level structure. In such a case, understanding and accounting for the hierarchical structure of the data becomes more challenging, and tools to handle these types of data are relatively rare.
+In this post, I show and explain how to conduct MI for three-level and cross-classified data in R.</description>
+    </item>
+    
+  </channel>
+</rss>
