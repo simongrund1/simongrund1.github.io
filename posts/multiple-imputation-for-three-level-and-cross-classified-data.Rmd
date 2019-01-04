@@ -2,6 +2,7 @@
 title: "Multiple imputation for three-level and cross-classified data"
 date: 2019-01-03
 tags: [ "r", "missing data", "multiple imputation", "multilevel" ]
+images: [ "https://simongrund1.github.io/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/feature.png" ]
 thumbnail: "thumbnail-1.png"
 draft: false
 ---

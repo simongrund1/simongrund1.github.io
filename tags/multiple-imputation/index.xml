@@ -2,23 +2,23 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Simon Grund [Multiple Imputation]</title>
-    <link>https://simongrund1.github.io/tags/multiple-imputation/</link>
+    <link>/tags/multiple-imputation/</link>
     <description>Recent content on Simon Grund [Multiple Imputation]</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 03 Jan 2019 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="https://simongrund1.github.io/tags/multiple-imputation/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="/tags/multiple-imputation/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Multiple imputation for three-level and cross-classified data</title>
-      <link>https://simongrund1.github.io/posts/multiple-imputation-for-three-level-and-cross-classified-data/</link>
+      <link>/posts/multiple-imputation-for-three-level-and-cross-classified-data/</link>
       <pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>https://simongrund1.github.io/posts/multiple-imputation-for-three-level-and-cross-classified-data/</guid>
+      <guid>/posts/multiple-imputation-for-three-level-and-cross-classified-data/</guid>
       <description>
-&lt;script src=&#34;https://simongrund1.github.io/rmarkdown-libs/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;
+&lt;script src=&#34;/rmarkdown-libs/kePrint/kePrint.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;Multiple imputation (MI) of missing values in hierarchical data can be tricky when the data do not have a simple two-level structure.
@@ -32,17 +32,17 @@ Here, I consider two types of this: nested and cross-classified data.&lt;/p&gt;
 &lt;h3&gt;Nested data&lt;/h3&gt;
 &lt;p&gt;In nested data, every observation belongs to one and only one higher-level unit.
 Two-level data are a simple example for this type data, as shown below for six clusters with &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; observations.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://simongrund1.github.io/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;460.8&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;460.8&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;More deeply nested structures are possible.
 For example, in three-level data, the clusters themselves are nested in even-higher-level units (e.g., students nested in classrooms nested in schools).&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://simongrund1.github.io/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/thumbnail-1.png&#34; width=&#34;460.8&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/thumbnail-1.png&#34; width=&#34;460.8&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Here, observations &lt;span class=&#34;math inline&#34;&gt;\(p\)&lt;/span&gt; are nested within clusters &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt;, and clusters are nested within higher-level clusters &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;cross-classified-data&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Cross-classified data&lt;/h3&gt;
 &lt;p&gt;In cross-classified data, every observation belongs directly to two or more clusters at once (e.g., experimental data with observations clustered within subjects &lt;em&gt;and&lt;/em&gt; stimuli).
 However, the clusters are not themselves nested within one another but “crossed” as shown below.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://simongrund1.github.io/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;460.8&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/unnamed-chunk-2-1.png&#34; width=&#34;460.8&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;In contrast to nested data, there is no clear hierarchy of the two cluster variables.
 Differently put, although both &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt; have observations clustered within them, neither of the two is itself nested within the other.&lt;/p&gt;
 &lt;/div&gt;
@@ -65,13 +65,13 @@ y_{ijk} = \beta_0 + \beta_1 x_{ijk} + \beta_2 \bar{x}_{\bullet jk} + \beta_3 z_{
 \]&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;where &lt;span class=&#34;math inline&#34;&gt;\(\bar{x}_{\bullet jk}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\bar{x}_{\bullet \bullet k}\)&lt;/span&gt; are the classroom and school mean of &lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(\bar{z}_{\bullet k}\)&lt;/span&gt; is the school mean of &lt;span class=&#34;math inline&#34;&gt;\(z\)&lt;/span&gt;, and &lt;span class=&#34;math inline&#34;&gt;\(u_{jk}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(v_k\)&lt;/span&gt; are random intercepts at the classroom and school level, respectively.
 A graphical representation of the model is as follows.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://simongrund1.github.io/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;537.6&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/unnamed-chunk-3-1.png&#34; width=&#34;537.6&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;Notice how this model allows (a) for lower-level variables to have variance at the different levels, and (b) for the for the variables to be related to each other to different extents at each level.
 These features must be taken into account when conducting MI.&lt;/p&gt;
 &lt;div id=&#34;example-data&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Example data&lt;/h3&gt;
 &lt;p&gt;For this example, I simulated data with a three-level structure consisting of 50 schools (level 3), five classrooms per school (level 2), and 10 students per classroom (level 1, total &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; = 2500).
-The data can be downloaded here (&lt;a href=&#34;https://simongrund1.github.io/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_3l.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;https://simongrund1.github.io/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_3l.Rdata&#34;&gt;Rdata&lt;/a&gt;).&lt;/p&gt;
+The data can be downloaded here (&lt;a href=&#34;/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_3l.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_3l.Rdata&#34;&gt;Rdata&lt;/a&gt;).&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -413,7 +413,7 @@ y_{ijk} = \beta_0 + \beta_1 z_j + \beta_2 a_k
 \]&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;where &lt;span class=&#34;math inline&#34;&gt;\(u_j\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(v_k\)&lt;/span&gt; denote random effects for subjects and items, respectively.
 The model can be illustrated like this.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://simongrund1.github.io/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;537.6&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/unnamed-chunk-14-1.png&#34; width=&#34;537.6&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;You can see that this model is relatively simple because it does not contain aggregated variables.&lt;a href=&#34;#fn1&#34; class=&#34;footnote-ref&#34; id=&#34;fnref1&#34;&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/a&gt;
 Nonetheless, it allows for (a) an effect of the experimental condition at the item level, (b) relations with the covariate at the person level, and (c) residual variance in the outcome at the level of items, subjects, and responses (i.e., in the interaction of items and subjects).&lt;/p&gt;
 &lt;p&gt;Notice how there is no “third” level in this model.
@@ -422,7 +422,7 @@ Instead, the “top” level includes both subjects and items, which are not fur
 &lt;h3&gt;Example data&lt;/h3&gt;
 &lt;p&gt;For this example, I simulated data with a cross-classified structure and a total of &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; = 5000 responses (level 1) from 100 subjects (level 2b) to 50 items (level 2a).
 The experimental condition (&lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; = 1) comprised all even-numbered items; the control (&lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; = 0) all the odd-numbered items.
-The data can be downloaded here (&lt;a href=&#34;https://simongrund1.github.io/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_cc.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;https://simongrund1.github.io/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_cc.Rdata&#34;&gt;Rdata&lt;/a&gt;).&lt;/p&gt;
+The data can be downloaded here (&lt;a href=&#34;/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_cc.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/example_cc.Rdata&#34;&gt;Rdata&lt;/a&gt;).&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr&gt;
@@ -711,10 +711,10 @@ predMatrix[&amp;quot;a&amp;quot;, &amp;quot;item&amp;quot;] &amp;lt;- -2&lt;/cod
     
     <item>
       <title>Dealing with missing data in ANOVA models</title>
-      <link>https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets/</link>
+      <link>/posts/anova-with-multiply-imputed-data-sets/</link>
       <pubDate>Mon, 25 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets/</guid>
+      <guid>/posts/anova-with-multiply-imputed-data-sets/</guid>
       <description>
 
 
@@ -746,7 +746,7 @@ Let’s illustrate this with an example.&lt;/p&gt;
 &lt;div id=&#34;example-1-between-subjects-anova&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Example 1: between-subjects ANOVA&lt;/h2&gt;
 &lt;p&gt;For this example, I simulated some data according to a between-subject design with three groups, &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; = 50 subjects per group, and a “medium” effect size of &lt;span class=&#34;math inline&#34;&gt;\(f\)&lt;/span&gt; = .25, which roughly corresponds to an &lt;span class=&#34;math inline&#34;&gt;\(R^2=6.8\%\)&lt;/span&gt; &lt;a href=&#34;#Cohen1988&#34;&gt;(Cohen, 1988)&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;You can download the data from this post if you want to reproduce the results (&lt;a href=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/example1.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/example1.Rdata&#34;&gt;Rdata&lt;/a&gt;). Here are the first few rows.&lt;/p&gt;
+&lt;p&gt;You can download the data from this post if you want to reproduce the results (&lt;a href=&#34;/posts/anova-with-multiply-imputed-data-sets_files/example1.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;/posts/anova-with-multiply-imputed-data-sets_files/example1.Rdata&#34;&gt;Rdata&lt;/a&gt;). Here are the first few rows.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr class=&#34;header&#34;&gt;
@@ -889,7 +889,7 @@ testModels(fit2, fit2.reduced, method = &amp;quot;D1&amp;quot;)&lt;/code&gt;&lt;
 &lt;p&gt;In contrast with listwise deletion, the &lt;span class=&#34;math inline&#34;&gt;\(F\)&lt;/span&gt;-test under MI indicates that the groups &lt;em&gt;are&lt;/em&gt; significantly different from one another.&lt;/p&gt;
 &lt;p&gt;This is because MI makes use of all the observed data, including the covariate &lt;code&gt;x&lt;/code&gt;, and used this information to generated replacements for missing &lt;code&gt;y&lt;/code&gt; that took its relation with &lt;code&gt;x&lt;/code&gt; into account.
 To see this, it is worth looking at a comparison of the observed and the imputed data.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/figure-html/thumbnail-1.png&#34; width=&#34;691.2&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/posts/anova-with-multiply-imputed-data-sets_files/figure-html/thumbnail-1.png&#34; width=&#34;691.2&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;The difference is not extreme, but it is easy to see that the imputed data tend to have more mass at the lower end of the distribution of &lt;code&gt;y&lt;/code&gt; (especially in groups A and C).&lt;/p&gt;
 &lt;p&gt;This is again a result of how the data were simulated: Lower &lt;code&gt;y&lt;/code&gt; values, through their relation with &lt;code&gt;x&lt;/code&gt;, are missing more often, which is accounted for using MI.
 Conversely, using listwise deletion placed the group means more closely together than they should be, and this affected the results in the ANOVA.&lt;/p&gt;
@@ -902,7 +902,7 @@ Fortunately, the procedure for the treatment and missing data and the analysis r
 &lt;p&gt;Although within-subjects designs are analyzed most often with the repeated-measures ANOVA, mixed-effects models have become a popular alternative. Here, I will choose the latter because mixed-effects models make it straightforward to pool ANOVA-like hypotheses in within-subjects designs.&lt;/p&gt;
 &lt;p&gt;To fit the mixed-effects model, we will use the &lt;code&gt;lmer()&lt;/code&gt; function from the package &lt;a href=&#34;https://cran.r-project.org/package=lme4&#34;&gt;&lt;code&gt;lme4&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(lme4)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I simulated a second data set similar to the one above, with &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; = 20 persons, a within-subject factor with three conditions, and five repeated measurements for each condition (&lt;a href=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/example2.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/example2.Rdata&#34;&gt;Rdata&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;I simulated a second data set similar to the one above, with &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; = 20 persons, a within-subject factor with three conditions, and five repeated measurements for each condition (&lt;a href=&#34;/posts/anova-with-multiply-imputed-data-sets_files/example2.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;/posts/anova-with-multiply-imputed-data-sets_files/example2.Rdata&#34;&gt;Rdata&lt;/a&gt;).&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr class=&#34;header&#34;&gt;

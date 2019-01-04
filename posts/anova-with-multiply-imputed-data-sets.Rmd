@@ -2,6 +2,7 @@
 title: 'Dealing with missing data in ANOVA models'
 date: 2018-06-25
 tags: [ "r", "missing data", "multiple imputation", "anova" ]
+images: [ "https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets/feature.png" ]
 thumbnail: "thumbnail-1.png"
 draft: false
 ---

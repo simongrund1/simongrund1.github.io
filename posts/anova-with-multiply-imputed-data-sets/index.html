@@ -11,13 +11,13 @@
   <title>Dealing with missing data in ANOVA models &middot; Simon Grund</title>
 
   
-  <link rel="stylesheet" href="https://simongrund1.github.io/css/print.css" media="print">
-  <link rel="stylesheet" href="https://simongrund1.github.io/css/poole.css">
-  <link rel="stylesheet" href="https://simongrund1.github.io/css/hyde.css">
+  <link rel="stylesheet" href="/css/print.css" media="print">
+  <link rel="stylesheet" href="/css/poole.css">
+  <link rel="stylesheet" href="/css/hyde.css">
 
   
-  <script defer src="https://simongrund1.github.io/js/fontawesome-all.js"></script>
-  <link rel="stylesheet" href="https://simongrund1.github.io/css/academicons.min.css">
+  <script defer src="/js/fontawesome-all.js"></script>
+  <link rel="stylesheet" href="/css/academicons.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro|Source+Serif+Pro|Inconsolata">
 
   
@@ -25,13 +25,33 @@
   <link rel="shortcut icon" href="/icon-small.png">
 
   
+  <meta property="og:title" content="Dealing with missing data in ANOVA models" />
+<meta property="og:description" content="The analysis of variance, or ANOVA, is among the most popular methods for analyzing how an outcome variable differs between groups, for example, in observational studies or in experiments with different conditions.
+But how do we conduct the ANOVA when there are missing data? In this post, I show how to deal with missing data in between- and within-subject designs using multiple imputation (MI) in R.
+The ANOVA model In the one-factorial ANOVA, the goal is to investigate whether two or more groups differ with respect to some outcome variable \(y\)." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/anova-with-multiply-imputed-data-sets/" />
+<meta property="og:image" content="https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets/feature.png" />
+<meta property="article:published_time" content="2018-06-25T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2018-06-25T00:00:00&#43;00:00"/>
+
+  <meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets/feature.png"/>
+
+<meta name="twitter:title" content="Dealing with missing data in ANOVA models"/>
+<meta name="twitter:description" content="The analysis of variance, or ANOVA, is among the most popular methods for analyzing how an outcome variable differs between groups, for example, in observational studies or in experiments with different conditions.
+But how do we conduct the ANOVA when there are missing data? In this post, I show how to deal with missing data in between- and within-subject designs using multiple imputation (MI) in R.
+The ANOVA model In the one-factorial ANOVA, the goal is to investigate whether two or more groups differ with respect to some outcome variable \(y\)."/>
+
+
+  
   <link href="" rel="alternate" type="application/rss+xml" title="Simon Grund" />
 
   
-  <link rel="stylesheet" href="https://simongrund1.github.io/css/code.css">
+  <link rel="stylesheet" href="/css/code.css">
   
-  <script src="https://simongrund1.github.io/js/highlight.pack.js"></script>
-  <script src="https://simongrund1.github.io/js/highlight.better-r.min.js"></script>
+  <script src="/js/highlight.pack.js"></script>
+  <script src="/js/highlight.better-r.min.js"></script>
 
   <script>
     hljs.initHighlightingOnLoad()
@@ -121,7 +141,7 @@
   <div id="sidebar-main" class="container sidebar-sticky hidden">
 
     <div class="sidebar-about">
-      <a href="https://simongrund1.github.io/"><h1>Simon Grund</h1></a>
+      <a href="/"><h1>Simon Grund</h1></a>
     </div>
 
     <p class="sidebar-orcid">
@@ -132,7 +152,7 @@
     PhD, Quantitative Psychology
 
     <ul class="sidebar-nav">
-      <li><a href="https://simongrund1.github.io/">Home</a> </li>
+      <li><a href="/">Home</a> </li>
       <li><a href="/posts"> Blog </a></li><li><a href="/publications/"> Publications </a></li><li><a href="/software/"> Software </a></li>
     </ul>
 

@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Simon Grund [Anova]</title>
-    <link>https://simongrund1.github.io/tags/anova/</link>
+    <link>/tags/anova/</link>
     <description>Recent content on Simon Grund [Anova]</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 25 Jun 2018 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="https://simongrund1.github.io/tags/anova/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="/tags/anova/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Dealing with missing data in ANOVA models</title>
-      <link>https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets/</link>
+      <link>/posts/anova-with-multiply-imputed-data-sets/</link>
       <pubDate>Mon, 25 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets/</guid>
+      <guid>/posts/anova-with-multiply-imputed-data-sets/</guid>
       <description>
 
 
@@ -48,7 +48,7 @@ Let’s illustrate this with an example.&lt;/p&gt;
 &lt;div id=&#34;example-1-between-subjects-anova&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Example 1: between-subjects ANOVA&lt;/h2&gt;
 &lt;p&gt;For this example, I simulated some data according to a between-subject design with three groups, &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; = 50 subjects per group, and a “medium” effect size of &lt;span class=&#34;math inline&#34;&gt;\(f\)&lt;/span&gt; = .25, which roughly corresponds to an &lt;span class=&#34;math inline&#34;&gt;\(R^2=6.8\%\)&lt;/span&gt; &lt;a href=&#34;#Cohen1988&#34;&gt;(Cohen, 1988)&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;You can download the data from this post if you want to reproduce the results (&lt;a href=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/example1.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/example1.Rdata&#34;&gt;Rdata&lt;/a&gt;). Here are the first few rows.&lt;/p&gt;
+&lt;p&gt;You can download the data from this post if you want to reproduce the results (&lt;a href=&#34;/posts/anova-with-multiply-imputed-data-sets_files/example1.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;/posts/anova-with-multiply-imputed-data-sets_files/example1.Rdata&#34;&gt;Rdata&lt;/a&gt;). Here are the first few rows.&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr class=&#34;header&#34;&gt;
@@ -191,7 +191,7 @@ testModels(fit2, fit2.reduced, method = &amp;quot;D1&amp;quot;)&lt;/code&gt;&lt;
 &lt;p&gt;In contrast with listwise deletion, the &lt;span class=&#34;math inline&#34;&gt;\(F\)&lt;/span&gt;-test under MI indicates that the groups &lt;em&gt;are&lt;/em&gt; significantly different from one another.&lt;/p&gt;
 &lt;p&gt;This is because MI makes use of all the observed data, including the covariate &lt;code&gt;x&lt;/code&gt;, and used this information to generated replacements for missing &lt;code&gt;y&lt;/code&gt; that took its relation with &lt;code&gt;x&lt;/code&gt; into account.
 To see this, it is worth looking at a comparison of the observed and the imputed data.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/figure-html/thumbnail-1.png&#34; width=&#34;691.2&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/posts/anova-with-multiply-imputed-data-sets_files/figure-html/thumbnail-1.png&#34; width=&#34;691.2&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;The difference is not extreme, but it is easy to see that the imputed data tend to have more mass at the lower end of the distribution of &lt;code&gt;y&lt;/code&gt; (especially in groups A and C).&lt;/p&gt;
 &lt;p&gt;This is again a result of how the data were simulated: Lower &lt;code&gt;y&lt;/code&gt; values, through their relation with &lt;code&gt;x&lt;/code&gt;, are missing more often, which is accounted for using MI.
 Conversely, using listwise deletion placed the group means more closely together than they should be, and this affected the results in the ANOVA.&lt;/p&gt;
@@ -204,7 +204,7 @@ Fortunately, the procedure for the treatment and missing data and the analysis r
 &lt;p&gt;Although within-subjects designs are analyzed most often with the repeated-measures ANOVA, mixed-effects models have become a popular alternative. Here, I will choose the latter because mixed-effects models make it straightforward to pool ANOVA-like hypotheses in within-subjects designs.&lt;/p&gt;
 &lt;p&gt;To fit the mixed-effects model, we will use the &lt;code&gt;lmer()&lt;/code&gt; function from the package &lt;a href=&#34;https://cran.r-project.org/package=lme4&#34;&gt;&lt;code&gt;lme4&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(lme4)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;I simulated a second data set similar to the one above, with &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; = 20 persons, a within-subject factor with three conditions, and five repeated measurements for each condition (&lt;a href=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/example2.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-sets_files/example2.Rdata&#34;&gt;Rdata&lt;/a&gt;).&lt;/p&gt;
+&lt;p&gt;I simulated a second data set similar to the one above, with &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; = 20 persons, a within-subject factor with three conditions, and five repeated measurements for each condition (&lt;a href=&#34;/posts/anova-with-multiply-imputed-data-sets_files/example2.csv&#34;&gt;CSV&lt;/a&gt;, &lt;a href=&#34;/posts/anova-with-multiply-imputed-data-sets_files/example2.Rdata&#34;&gt;Rdata&lt;/a&gt;).&lt;/p&gt;
 &lt;table&gt;
 &lt;thead&gt;
 &lt;tr class=&#34;header&#34;&gt;
