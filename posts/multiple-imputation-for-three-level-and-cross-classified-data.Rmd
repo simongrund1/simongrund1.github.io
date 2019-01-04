@@ -36,7 +36,7 @@ Here, I consider two types of this: nested and cross-classified data.
 ### Nested data
 
 In nested data, every observation belongs to one and only one higher-level unit.
-Two-level data are a simple example for this type data, as shown below for three clusters with $n$ observations.
+Two-level data are a simple example for this type data, as shown below for six clusters with $n$ observations.
 
 ```{r, fig.width=4.8, fig.height=0.8, dev.args=list(pointsize=10), echo=FALSE}
 grid.newpage()
@@ -415,7 +415,7 @@ Every row corresponds to one student, and the classrooms and schools are numbere
 To perform MI, I use the R packages [`mice`](https://cran.r-project.org/package=mice) and [`miceadds`](https://cran.r-project.org/package=miceadds).
 The `mice` package treats missing data by iterating through a sequence of imputation models, thus treating variable after variable in a step-by-step manner (for a general introduction to `mice`, see [van Buuren & Groothuis-Oudshoorn, 2011](#vanBuuren2011)).
 
-The imputation models are set up by defining (a) a *method* for each variable, naming the type of model to be used, and (b) a *predictor matrix*, naming which predictors (columns) should be used each variable (rows).
+The imputation models are set up by defining (a) a *method* for each variable, naming the type of model to be used, and (b) a *predictor matrix*, naming which predictors (columns) should be used for each variable (rows).
 Extracting the defaults provides a good starting point.
 
 ```{r}
@@ -442,7 +442,7 @@ impMethod[c("x", "y", "z")] <- "ml.lmer"
 impMethod["w"] <- "2lonly.norm"
 ```
 
-The two functions require that the hierarchical structure of the imputation model is set up in different ways.
+The two methods require that the hierarchical structure of the imputation model is set up in different ways.
 To make this easier, we first remove the cluster indicators from the set of predictors altogether by setting their column values to zero.
 
 ```{r}
@@ -460,7 +460,7 @@ predMatrix["w", "school"] <- -2
 ```
 
 For variables imputed with `ml.lmer`, the hierarchical structure can be more complicated and must be set with two additional arguments (i.e., outside the predictor matrix).
-First, for all higher-level variables (e.g., `z` and `w`), we need to specify the level at which the variables are measured (all others are assumed to be at level 1).
+First, for all higher-level variables (e.g., `z` and `w`), we need to specify the level at which the variables are measured (all others are assumed to be measured at level 1).
 
 ```{r}
 # ... specify levels of higher-level variables
@@ -677,7 +677,7 @@ Some of the responses ($y$) are sporadically missing. In addition, a number of s
 The main strategy for MI remains the same as in the previous example.
 In order to accommodate the multilevel structure, we again need to ensure that the imputation model allows for the variables to have variance and relations with each other at different levels, with the exception that aggregated variables are not used here (see Footnote [1](#fn1)).
 
-We again start with the default setup and adjust it as we need to.
+We again start with the default setup and adjust it the way we need to.
 
 ```{r}
 # create default predictor matrix and imputation methods
@@ -688,7 +688,7 @@ impMethod <- make.method(data = dat)
 #### Setting up imputation models
 
 In this example, only `y` and `z` contain missing data.
-For the lower-level variable `y` we again use the `ml.lmer` method.
+For the lower-level variable `y`, we again use the `ml.lmer` method.
 For `z`, we use `2lonly.norm` because it is located at the "top" of the hierarchy (despite it not being there alone).[^2]
 
 ```{r}
@@ -736,7 +736,7 @@ However, in this cross-classified design these aggregates turn out to be constan
 For this reason, the aggregates need to be removed from the imputation model.
 
 For variables imputed with `2lonly.norm`, we can do this by removing variables from the predictor matrix. 
-For `z`, we remove `a` from the set of predictors such that `z` is only predicted by the subject level aggregate of `y` (but not `a`).
+For `z`, we remove `a` from the set of predictors such that `z` is only predicted by the subject-level aggregate of `y` (but not `a`).
 
 ```{r}
 # remove effect of (average) a on z
@@ -748,7 +748,7 @@ For variables imputed with `ml.lmer`, this is not done in the predictor matrix b
 #### Imputation
 
 To start the imputation, we run `mice` as follows.
-To turn off the automatic aggregation of variables for `ml.lmer`, I also set the argument `aggregate_automatically = FALSE`.
+To turn off the automatic aggregation of variables used by `ml.lmer`, I also set the argument `aggregate_automatically = FALSE`.
 
 ```{r imp2, results="hide", cache=TRUE}
 # run mice
@@ -810,7 +810,7 @@ Similar methods are available for binary, ordinal, and (to some extent) polytomo
   <li id="vanBuuren2011">van Buuren, S., &amp; Groothuis-Oudshoorn, K. (2011). MICE: Multivariate imputation by chained equations in R. <i>Journal of Statistical Software</i>, <i>45</i>(3), 1–67. <a href="https://doi.org/10.18637/jss.v045.i03">doi:10.18637/jss.v045.i03</a></li>
 </ul>
 
-[^1]: In the present case, aggregating $a$ and $z$ is not useful, because all items are answered by all subjects, so that the aggregates of $a$ at the person level and $z$ at the item level are constant (e.g., every person responds to the same number of items in the experimental and control condition).
+[^1]: In the present case, aggregating $a$ and $z$ is not useful, because all items are answered by all subjects, so that the aggregates of $a$ at the person level and $z$ at the item level are constant (e.g., every person responds to the same number of items in the experimental and the control condition).
 However, aggregated variables can still play a role in cross-classified data.
 For example, there can be other variables at level 1 (e.g., a covariate providing information about individual trials) or the experimental manipulation may be applied at level 1 (e.g., if it is applied randomly to items on a trial-by-trial basis).
 In such a case, the aggregated of these variables would *not* be constant and may need to be taken into account during MI.
@@ -827,7 +827,7 @@ In such a case, the aggregated of these variables would *not* be constant and ma
 
     This is not needed here because `a` has no missing data.
 
-[^3]: If there are that need to be aggregated (e.g., other variables at level 1), then the aggregation needs to be done "by hand", either by calculating the aggregated variables beforehand (if the variables are completely observed) or by using "passive imputation" (if they are incomplete).
+[^3]: If there are other variables that need to be aggregated (e.g., other variables at level 1), then the aggregation needs to be done "by hand", either by calculating the aggregated variables beforehand (if the variables are completely observed) or by using "passive imputation" (if they are incomplete).
 
 
 

@@ -40,7 +40,7 @@ Here, I consider two types of this: nested and cross-classified data.&lt;/p&gt;
 &lt;div id=&#34;nested-data&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Nested data&lt;/h3&gt;
 &lt;p&gt;In nested data, every observation belongs to one and only one higher-level unit.
-Two-level data are a simple example for this type data, as shown below for three clusters with &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; observations.&lt;/p&gt;
+Two-level data are a simple example for this type data, as shown below for six clusters with &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; observations.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://simongrund1.github.io/posts/multiple-imputation-for-three-level-and-cross-classified-data_files/figure-html/unnamed-chunk-1-1.png&#34; width=&#34;460.8&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;More deeply nested structures are possible.
 For example, in three-level data, the clusters themselves are nested in even-higher-level units (e.g., students nested in classrooms nested in schools).&lt;/p&gt;
@@ -308,7 +308,7 @@ NA
 &lt;h3&gt;Multiple imputation&lt;/h3&gt;
 &lt;p&gt;To perform MI, I use the R packages &lt;a href=&#34;https://cran.r-project.org/package=mice&#34;&gt;&lt;code&gt;mice&lt;/code&gt;&lt;/a&gt; and &lt;a href=&#34;https://cran.r-project.org/package=miceadds&#34;&gt;&lt;code&gt;miceadds&lt;/code&gt;&lt;/a&gt;.
 The &lt;code&gt;mice&lt;/code&gt; package treats missing data by iterating through a sequence of imputation models, thus treating variable after variable in a step-by-step manner (for a general introduction to &lt;code&gt;mice&lt;/code&gt;, see &lt;a href=&#34;#vanBuuren2011&#34;&gt;van Buuren &amp;amp; Groothuis-Oudshoorn, 2011&lt;/a&gt;).&lt;/p&gt;
-&lt;p&gt;The imputation models are set up by defining (a) a &lt;em&gt;method&lt;/em&gt; for each variable, naming the type of model to be used, and (b) a &lt;em&gt;predictor matrix&lt;/em&gt;, naming which predictors (columns) should be used each variable (rows).
+&lt;p&gt;The imputation models are set up by defining (a) a &lt;em&gt;method&lt;/em&gt; for each variable, naming the type of model to be used, and (b) a &lt;em&gt;predictor matrix&lt;/em&gt;, naming which predictors (columns) should be used for each variable (rows).
 Extracting the defaults provides a good starting point.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(mice)
 library(miceadds)
@@ -326,7 +326,7 @@ impMethod[c(&amp;quot;x&amp;quot;, &amp;quot;y&amp;quot;, &amp;quot;z&amp;quot;)
 
 # method for variables at top level (w)
 impMethod[&amp;quot;w&amp;quot;] &amp;lt;- &amp;quot;2lonly.norm&amp;quot;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The two functions require that the hierarchical structure of the imputation model is set up in different ways.
+&lt;p&gt;The two methods require that the hierarchical structure of the imputation model is set up in different ways.
 To make this easier, we first remove the cluster indicators from the set of predictors altogether by setting their column values to zero.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# remove indicator variables from predictor matrix
 predMatrix[, c(&amp;quot;class&amp;quot;, &amp;quot;school&amp;quot;)] &amp;lt;- 0&lt;/code&gt;&lt;/pre&gt;
@@ -335,7 +335,7 @@ Here, the “top” indicator is &lt;code&gt;school&lt;/code&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# ... specify cluster indicator (2lonly.norm)
 predMatrix[&amp;quot;w&amp;quot;, &amp;quot;school&amp;quot;] &amp;lt;- -2&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;For variables imputed with &lt;code&gt;ml.lmer&lt;/code&gt;, the hierarchical structure can be more complicated and must be set with two additional arguments (i.e., outside the predictor matrix).
-First, for all higher-level variables (e.g., &lt;code&gt;z&lt;/code&gt; and &lt;code&gt;w&lt;/code&gt;), we need to specify the level at which the variables are measured (all others are assumed to be at level 1).&lt;/p&gt;
+First, for all higher-level variables (e.g., &lt;code&gt;z&lt;/code&gt; and &lt;code&gt;w&lt;/code&gt;), we need to specify the level at which the variables are measured (all others are assumed to be measured at level 1).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# ... specify levels of higher-level variables
 level &amp;lt;- character(ncol(dat))
 names(level) &amp;lt;- colnames(dat)
@@ -573,14 +573,14 @@ NA
 &lt;h3&gt;Multiple imputation&lt;/h3&gt;
 &lt;p&gt;The main strategy for MI remains the same as in the previous example.
 In order to accommodate the multilevel structure, we again need to ensure that the imputation model allows for the variables to have variance and relations with each other at different levels, with the exception that aggregated variables are not used here (see Footnote &lt;a href=&#34;#fn1&#34;&gt;1&lt;/a&gt;).&lt;/p&gt;
-&lt;p&gt;We again start with the default setup and adjust it as we need to.&lt;/p&gt;
+&lt;p&gt;We again start with the default setup and adjust it the way we need to.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# create default predictor matrix and imputation methods
 predMatrix &amp;lt;- make.predictorMatrix(data = dat)
 impMethod &amp;lt;- make.method(data = dat)&lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;setting-up-imputation-models-1&#34; class=&#34;section level4&#34;&gt;
 &lt;h4&gt;Setting up imputation models&lt;/h4&gt;
 &lt;p&gt;In this example, only &lt;code&gt;y&lt;/code&gt; and &lt;code&gt;z&lt;/code&gt; contain missing data.
-For the lower-level variable &lt;code&gt;y&lt;/code&gt; we again use the &lt;code&gt;ml.lmer&lt;/code&gt; method.
+For the lower-level variable &lt;code&gt;y&lt;/code&gt;, we again use the &lt;code&gt;ml.lmer&lt;/code&gt; method.
 For &lt;code&gt;z&lt;/code&gt;, we use &lt;code&gt;2lonly.norm&lt;/code&gt; because it is located at the “top” of the hierarchy (despite it not being there alone).&lt;a href=&#34;#fn2&#34; class=&#34;footnote-ref&#34; id=&#34;fnref2&#34;&gt;&lt;sup&gt;2&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# method for lower-level variables (y)
 impMethod[&amp;quot;y&amp;quot;] &amp;lt;- &amp;quot;ml.lmer&amp;quot;
@@ -611,7 +611,7 @@ cluster[[&amp;quot;y&amp;quot;]] &amp;lt;- c(&amp;quot;subject&amp;quot;, &amp;q
 However, in this cross-classified design these aggregates turn out to be constant because every person responds to every item (see Footnote &lt;a href=&#34;#fn1&#34;&gt;1&lt;/a&gt;).
 For this reason, the aggregates need to be removed from the imputation model.&lt;/p&gt;
 &lt;p&gt;For variables imputed with &lt;code&gt;2lonly.norm&lt;/code&gt;, we can do this by removing variables from the predictor matrix.
-For &lt;code&gt;z&lt;/code&gt;, we remove &lt;code&gt;a&lt;/code&gt; from the set of predictors such that &lt;code&gt;z&lt;/code&gt; is only predicted by the subject level aggregate of &lt;code&gt;y&lt;/code&gt; (but not &lt;code&gt;a&lt;/code&gt;).&lt;/p&gt;
+For &lt;code&gt;z&lt;/code&gt;, we remove &lt;code&gt;a&lt;/code&gt; from the set of predictors such that &lt;code&gt;z&lt;/code&gt; is only predicted by the subject-level aggregate of &lt;code&gt;y&lt;/code&gt; (but not &lt;code&gt;a&lt;/code&gt;).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# remove effect of (average) a on z
 predMatrix[&amp;quot;z&amp;quot;, &amp;quot;a&amp;quot;] &amp;lt;- 0&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;For variables imputed with &lt;code&gt;ml.lmer&lt;/code&gt;, this is not done in the predictor matrix but with a global argument when running the imputation.&lt;a href=&#34;#fn3&#34; class=&#34;footnote-ref&#34; id=&#34;fnref3&#34;&gt;&lt;sup&gt;3&lt;/sup&gt;&lt;/a&gt;&lt;/p&gt;
@@ -619,7 +619,7 @@ predMatrix[&amp;quot;z&amp;quot;, &amp;quot;a&amp;quot;] &amp;lt;- 0&lt;/code&gt
 &lt;div id=&#34;imputation-1&#34; class=&#34;section level4&#34;&gt;
 &lt;h4&gt;Imputation&lt;/h4&gt;
 &lt;p&gt;To start the imputation, we run &lt;code&gt;mice&lt;/code&gt; as follows.
-To turn off the automatic aggregation of variables for &lt;code&gt;ml.lmer&lt;/code&gt;, I also set the argument &lt;code&gt;aggregate_automatically = FALSE&lt;/code&gt;.&lt;/p&gt;
+To turn off the automatic aggregation of variables used by &lt;code&gt;ml.lmer&lt;/code&gt;, I also set the argument &lt;code&gt;aggregate_automatically = FALSE&lt;/code&gt;.&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# run mice
 imp &amp;lt;- mice(dat, method = impMethod, predictorMatrix = predMatrix, maxit = 20, 
             m = 20, levels_id = cluster, variables_levels = level,
@@ -701,7 +701,7 @@ van Buuren, S., &amp;amp; Groothuis-Oudshoorn, K. (2011). MICE: Multivariate imp
 &lt;div class=&#34;footnotes&#34;&gt;
 &lt;hr /&gt;
 &lt;ol&gt;
-&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;In the present case, aggregating &lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(z\)&lt;/span&gt; is not useful, because all items are answered by all subjects, so that the aggregates of &lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; at the person level and &lt;span class=&#34;math inline&#34;&gt;\(z\)&lt;/span&gt; at the item level are constant (e.g., every person responds to the same number of items in the experimental and control condition).
+&lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;In the present case, aggregating &lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(z\)&lt;/span&gt; is not useful, because all items are answered by all subjects, so that the aggregates of &lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; at the person level and &lt;span class=&#34;math inline&#34;&gt;\(z\)&lt;/span&gt; at the item level are constant (e.g., every person responds to the same number of items in the experimental and the control condition).
 However, aggregated variables can still play a role in cross-classified data.
 For example, there can be other variables at level 1 (e.g., a covariate providing information about individual trials) or the experimental manipulation may be applied at level 1 (e.g., if it is applied randomly to items on a trial-by-trial basis).
 In such a case, the aggregated of these variables would &lt;em&gt;not&lt;/em&gt; be constant and may need to be taken into account during MI.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
@@ -712,7 +712,7 @@ impMethod[&amp;quot;a&amp;quot;] &amp;lt;- &amp;quot;2lonly.norm&amp;quot;
 # specify cluster indicator
 predMatrix[&amp;quot;a&amp;quot;, &amp;quot;item&amp;quot;] &amp;lt;- -2&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;This is not needed here because &lt;code&gt;a&lt;/code&gt; has no missing data.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;If there are that need to be aggregated (e.g., other variables at level 1), then the aggregation needs to be done “by hand”, either by calculating the aggregated variables beforehand (if the variables are completely observed) or by using “passive imputation” (if they are incomplete).&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;If there are other variables that need to be aggregated (e.g., other variables at level 1), then the aggregation needs to be done “by hand”, either by calculating the aggregated variables beforehand (if the variables are completely observed) or by using “passive imputation” (if they are incomplete).&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
