@@ -2,66 +2,66 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Simon Grund [Tags]</title>
-    <link>/tags/</link>
+    <link>https://simongrund1.github.io/tags/</link>
     <description>Recent content on Simon Grund [Tags]</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 25 Jun 2018 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://simongrund1.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Anova</title>
-      <link>/tags/anova/</link>
+      <link>https://simongrund1.github.io/tags/anova/</link>
       <pubDate>Mon, 25 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/anova/</guid>
+      <guid>https://simongrund1.github.io/tags/anova/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Missing Data</title>
-      <link>/tags/missing-data/</link>
+      <link>https://simongrund1.github.io/tags/missing-data/</link>
       <pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/missing-data/</guid>
+      <guid>https://simongrund1.github.io/tags/missing-data/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Multilevel</title>
-      <link>/tags/multilevel/</link>
+      <link>https://simongrund1.github.io/tags/multilevel/</link>
       <pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/multilevel/</guid>
+      <guid>https://simongrund1.github.io/tags/multilevel/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Multiple Imputation</title>
-      <link>/tags/multiple-imputation/</link>
+      <link>https://simongrund1.github.io/tags/multiple-imputation/</link>
       <pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/multiple-imputation/</guid>
+      <guid>https://simongrund1.github.io/tags/multiple-imputation/</guid>
       <description></description>
     </item>
     
     <item>
       <title>News</title>
-      <link>/tags/news/</link>
+      <link>https://simongrund1.github.io/tags/news/</link>
       <pubDate>Sun, 27 May 2018 00:00:00 +0000</pubDate>
       
-      <guid>/tags/news/</guid>
+      <guid>https://simongrund1.github.io/tags/news/</guid>
       <description></description>
     </item>
     
     <item>
       <title>R</title>
-      <link>/tags/r/</link>
+      <link>https://simongrund1.github.io/tags/r/</link>
       <pubDate>Thu, 03 Jan 2019 00:00:00 +0000</pubDate>
       
-      <guid>/tags/r/</guid>
+      <guid>https://simongrund1.github.io/tags/r/</guid>
       <description></description>
     </item>
     

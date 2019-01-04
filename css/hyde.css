@@ -245,6 +245,12 @@ ul.bibliography li {
   padding-bottom: 0.5rem;
 }
 
+/* RSS */
+.rss-symbol{
+  color: #c0b8a2;
+  margin-left: 1.2rem;
+}
+
 /* Tables */
 
 table {
