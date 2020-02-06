@@ -275,8 +275,8 @@ Because <code>x</code> is also positively correlated with <code>y</code>, this m
 <p>Lets see what happens if we run the ANOVA only with those cases that have <code>y</code> observed (i.e., listwise deletion). This is the standard setting on most statistical software.</p>
 <p>In R, the ANOVA can be conducted with the <code>lm()</code> function as follows.</p>
 <pre class="r"><code># fit the ANOVA model
-fit1 &lt;- lm(y ~ 1 + group, data = dat)
-summary(fit1)</code></pre>
+fit0 &lt;- lm(y ~ 1 + group, data = dat)
+summary(fit0)</code></pre>
 <pre><code># 
 # Call:
 # lm(formula = y ~ 1 + group, data = dat)
@@ -312,22 +312,22 @@ In this example, <code>x</code> is a direct cause of missing data in <code>y</co
 library(mitml)</code></pre>
 <p>Specifying an imputation model is very simple here. With the following command, we generate 100 imputations for <code>y</code> on the basis of a regression model with both <code>group</code> and <code>x</code> as predictors and a normal error term.</p>
 <pre class="r"><code># run MI
-imp &lt;- mice(data = dat, method = &quot;norm&quot;, m = 100)</code></pre>
+imp1 &lt;- mice(data = dat, method = &quot;norm&quot;, m = 100)</code></pre>
 <p>The imputed data sets can then be saved as a list, containing 100 copies of the original data, in which the missing data have been replaced by different imputations.</p>
 <pre class="r"><code># create a list of completed data sets
-implist &lt;- mids2mitml.list(imp)</code></pre>
+implist1 &lt;- mids2mitml.list(imp1)</code></pre>
 <p>Finally, we fit the ANOVA model to each of the imputed data sets and pool the results.
 The analysis part is done with the <code>with()</code> command, which applies the same linear model, <code>lm()</code>, to each data set.
 The pooling es then done with the <code>testEstimates()</code> function.</p>
 <pre class="r"><code># fit the ANOVA model
-fit2 &lt;- with(implist, lm(y ~ 1 + group))
+fit1 &lt;- with(implist1, lm(y ~ 1 + group))
 
 # pool the parameter estimates
-testEstimates(fit2)</code></pre>
+testEstimates(fit1)</code></pre>
 <pre><code># 
 # Call:
 # 
-# testEstimates(model = fit2)
+# testEstimates(model = fit1)
 # 
 # Final parameter estimates and inferences obtained from 100 imputed data sets.
 # 
@@ -343,14 +343,14 @@ Rather, it was enough to include <code>x</code> in the imputation model, after w
 To this end, we use a pooled version of the <span class="math inline">\(F\)</span>-test above, which consists of a comparison of the full model (the ANOVA model) with a reduced model that does not contain the coefficients we wish to test.<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a></p>
 <p>In this case, we wish to test the coefficients pertaining to the differences between groups, so the reduced model does not contain <code>group</code> as a predictor.</p>
 <pre class="r"><code># fit the reduced ANOVA model (without &#39;group&#39;)
-fit2.reduced &lt;- with(implist, lm(y ~ 1))</code></pre>
+fit1.reduced &lt;- with(implist1, lm(y ~ 1))</code></pre>
 <p>The full and the reduced model can then be compared with the pooled version of the <span class="math inline">\(F\)</span>-test (i.e., the Wald test), which is known in the literature as <span class="math inline">\(D_1\)</span>.</p>
 <pre class="r"><code># compare the two models with pooled Wald test
-testModels(fit2, fit2.reduced, method = &quot;D1&quot;)</code></pre>
+testModels(fit1, fit1.reduced, method = &quot;D1&quot;)</code></pre>
 <pre><code># 
 # Call:
 # 
-# testModels(model = fit2, null.model = fit2.reduced, method = &quot;D1&quot;)
+# testModels(model = fit1, null.model = fit1.reduced, method = &quot;D1&quot;)
 # 
 # Model comparison calculated from 100 imputed data sets.
 # Combination method: D1 
@@ -446,21 +446,21 @@ pred &lt;- ini$pred
 pred[&quot;y&quot;, &quot;id&quot;] &lt;- -2
 
 # run MI
-imp &lt;- mice(data = dat, pred = pred, method = &quot;2l.pan&quot;, m = 100)
-summary(imp)</code></pre>
+imp2 &lt;- mice(data = dat, pred = pred, method = &quot;2l.pan&quot;, m = 100)
+summary(imp2)</code></pre>
 <p>The list of imputed data sets is generated as above.</p>
 <pre class="r"><code># create a list of completed data sets
-implist &lt;- mids2mitml.list(imp)</code></pre>
+implist2 &lt;- mids2mitml.list(imp2)</code></pre>
 <p>The ANOVA model is then fit using <code>lmer()</code>.
 Notice that this model contains an additional term, <code>(1|id)</code>, which specifies a random effect for each subject.
 This effect captures unsystematic differences between subjects, thus accounting for the nested structure of the repeated-measures data.</p>
 <pre class="r"><code># fit the ANOVA model
-fit3 &lt;- with(implist, lmer(y ~ 1 + cond + (1|id)))
-testEstimates(fit3, var.comp = TRUE)</code></pre>
+fit2 &lt;- with(implist2, lmer(y ~ 1 + cond + (1|id)))
+testEstimates(fit2, var.comp = TRUE)</code></pre>
 <pre><code># 
 # Call:
 # 
-# testEstimates(model = fit3, var.comp = TRUE)
+# testEstimates(model = fit2, var.comp = TRUE)
 # 
 # Final parameter estimates and inferences obtained from 100 imputed data sets.
 # 
@@ -478,12 +478,12 @@ testEstimates(fit3, var.comp = TRUE)</code></pre>
 <p>The output is similar to before, with the regression coefficients denoting the differences between the conditions. In addition, the output includes the variance of the random effect that denotes the unsystematic differences between subjects.</p>
 <p>Testing the null hypothesis of the ANOVA again requires the specification of a reduced model that does not contain the parameters to be tested (i.e., those pertaining to <code>cond</code>).</p>
 <pre class="r"><code># pool the parameter estimates
-fit3.reduced &lt;- with(implist, lmer(y ~ 1 + (1|id)))
-testModels(fit3, fit3.reduced, method = &quot;D1&quot;)</code></pre>
+fit2.reduced &lt;- with(implist2, lmer(y ~ 1 + (1|id)))
+testModels(fit2, fit2.reduced, method = &quot;D1&quot;)</code></pre>
 <pre><code># 
 # Call:
 # 
-# testModels(model = fit3, null.model = fit3.reduced, method = &quot;D1&quot;)
+# testModels(model = fit2, null.model = fit2.reduced, method = &quot;D1&quot;)
 # 
 # Model comparison calculated from 100 imputed data sets.
 # Combination method: D1 
@@ -495,6 +495,78 @@ testModels(fit3, fit3.reduced, method = &quot;D1&quot;)</code></pre>
 <p>As in the first example, the three conditions are significantly different from one another.</p>
 <p>These two examples were obviously very simple.
 However, the same general procedure can be used for more complex ANOVA models, including models with two or more factors, interaction effects, or for mixed designs with both between- and within-subject factors.</p>
+</div>
+</div>
+<div id="update-post-hoc-contrasts" class="section level2">
+<h2>Update: Post-hoc contrasts</h2>
+<p>In the one-way ANOVA, testing the (omnibus) null hypothesis is often only one part of the journey.
+Once an omnibus test yielded a positive result, indicating that the means differ between groups, we often want to know <em>which</em> groups differ <em>by how much</em>.
+This can be done by testing post-hoc contrasts.</p>
+<p>For example, suppose we have conducted the between-subjects ANOVA with three groups—labeled A, B, and C—in Example 1.
+The omnibus <span class="math inline">\(F\)</span>-test is significant, but which groups differ the most from each other?</p>
+<p>In the following, we will look at two examples for testing contrasts between groups on the basis of the imputed data obtained from MI.</p>
+<div id="pairwise-contrasts" class="section level3">
+<h3>Pairwise contrasts</h3>
+<p>The easiest option for testing pairwise contrasts between groups is to use one of the R packages that exist for this purpose.
+For this example, we will use the <a href="https://cran.r-project.org/package=multcomp"><code>multcomp</code></a> package.<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a></p>
+<pre class="r"><code>library(multcomp)</code></pre>
+<p>In the <code>multcomp</code> package, the <code>glht()</code> function is used to test post-hoc contrasts.
+Here, we will use Tukey’s method to test pairwise contrasts between the groups (i.e., B vs. A, C vs. A, and C vs. B)</p>
+<p>Based on the imputation conducted in Example 1 and ANOVA model fitted to the 100 imputed data sets (<code>fit1</code>), we can use the <code>lapply</code> function to apply <code>glht()</code> to all of the imputed data sets.
+This will perform pairwise contrasts for all data sets simultaneously.</p>
+<pre class="r"><code># perform pairwise comparisons (Tukey)
+fit1.pairwise &lt;- lapply(fit1, glht, linfct = mcp(group = &quot;Tukey&quot;))</code></pre>
+<p>Next, the parameter estimates must be pooled across the imputed data sets.
+The object created by <code>lapply</code>, however, is only a simple list and needs to be converted into a <code>mitml.result</code> object.
+Then, we can pool the results as usual.</p>
+<pre class="r"><code># convert to &quot;mitml.result&quot; and pool the parameter estimates
+fit1.pairwise &lt;- as.mitml.result(fit1.pairwise)
+testEstimates(fit1.pairwise)</code></pre>
+<pre><code># 
+# Call:
+# 
+# testEstimates(model = fit1.pairwise)
+# 
+# Final parameter estimates and inferences obtained from 100 imputed data sets.
+# 
+#        Estimate Std.Error   t.value        df   P(&gt;|t|)       RIV       FMI 
+# B - A     0.204     0.200     1.022  4816.135     0.307     0.167     0.144 
+# C - A    -0.328     0.204    -1.611  3274.908     0.107     0.210     0.174 
+# C - B    -0.532     0.202    -2.639  3968.657     0.008     0.188     0.158 
+# 
+# Unadjusted hypothesis test as appropriate in larger samples.</code></pre>
+<p>In this example, it seems that the means differ primarily between groups B and C, whereas those between the groups B and A and C and A, respectively, are somewhat smaller and not statistically significant.</p>
+</div>
+<div id="other-contrasts" class="section level3">
+<h3>Other contrasts</h3>
+<p>The same method can be used to test more specific hypotheses.
+For example, we may be interested in how the mean in one group (say B) compares with the means in the other two groups (say A and C).
+Such a specific hypothesis can be tested with <code>glht()</code> by providing a symbolic representation of the contrast.</p>
+<pre class="r"><code># specify contrast comparing group B with groups A and C
+fit1.B.vs.AC &lt;- lapply(fit1, glht, linfct = mcp(group = &quot;B - (A + C)/2 = 0&quot;))</code></pre>
+<p>The resulting object is then converted to the <code>mitml.result</code> format, and the results are pooled as before.</p>
+<pre class="r"><code># convert to &quot;mitml.result&quot; and pool the parameter estimates
+fit1.B.vs.AC &lt;- as.mitml.result(fit1.B.vs.AC)
+testEstimates(fit1.B.vs.AC)</code></pre>
+<pre><code># 
+# Call:
+# 
+# testEstimates(model = fit1.B.vs.AC)
+# 
+# Final parameter estimates and inferences obtained from 100 imputed data sets.
+# 
+#                Estimate Std.Error   t.value        df   P(&gt;|t|)       RIV       FMI 
+# B - (A + C)/2     0.368     0.173     2.128  4860.807     0.033     0.166     0.143 
+# 
+# Unadjusted hypothesis test as appropriate in larger samples.</code></pre>
+<p>This contrast, too, appears to be statistically significant (although just barely so).</p>
+</div>
+<div id="note-on-multiple-comparisons" class="section level3">
+<h3>Note on multiple comparisons</h3>
+<p>In many cases, it makes sense to correct for multiple comparisons when testing post-hoc contrasts, for example by applying corrections to the <span class="math inline">\(p\)</span>-values obtained from multiple tests or by adjusting the <span class="math inline">\(\alpha\)</span> level with which these are compared.</p>
+<p>Unfortunately, software solutions that provide these corrections for multiply imputed data are in short supply.
+For this reason, these corrections need to be applied “by hand.”
+For example, to apply a Bonferroni correction, we would simply follow the steps outlined above but adjust the <span class="math inline">\(\alpha\)</span> level with which we compare the <span class="math inline">\(p\)</span>-values in the pooled results obtained from MI.</p>
 </div>
 </div>
 <div id="procedures-other-than-mi" class="section level2">
@@ -546,8 +618,8 @@ van Ginkel, J. R., &amp; Kroonenberg, P. M. (2014). Analysis of variance of mult
 <li id="fn1"><p>The hypothesis test in ANOVA is a Wald test that simultaneously tests all the differences between groups against zero. In this example, these differences are represented by the regression coefficients for <code>groupB</code> and <code>groupC</code>.</p>
 <p>This can easily be verified by calculating the Wald test by hand:</p>
 <pre class="r"><code># estimates and covariance matrix
-b &lt;- coef(fit1)[-1]
-V &lt;- vcov(fit1)[-1,-1]
+b &lt;- coef(fit0)[-1]
+V &lt;- vcov(fit0)[-1,-1]
 
 # Wald-test
 F &lt;- b %*% solve(V) %*% b / 2      # F statistic
@@ -559,11 +631,11 @@ pf(F, 2, 116, lower.tail = FALSE)  # p value</code></pre>
 <p>Under MI, this can be done, too, with the <code>testConstraints()</code> function:</p>
 <pre class="r"><code># define and test parameter constraints
 con &lt;- c(&quot;groupB&quot;, &quot;groupC&quot;)
-testConstraints(fit2, constraints = con, method = &quot;D1&quot;)</code></pre>
+testConstraints(fit1, constraints = con, method = &quot;D1&quot;)</code></pre>
 <pre><code># 
 # Call:
 # 
-# testConstraints(model = fit2, constraints = con, method = &quot;D1&quot;)
+# testConstraints(model = fit1, constraints = con, method = &quot;D1&quot;)
 # 
 # Hypothesis test calculated from 100 imputed data sets. The following
 # constraints were specified:
@@ -579,6 +651,66 @@ testConstraints(fit2, constraints = con, method = &quot;D1&quot;)</code></pre>
 # 
 # Unadjusted hypothesis test as appropriate in larger samples.</code></pre>
 <p>The results of this are identical to those of <code>testModels()</code>.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>Post-hoc contrasts can also be tested with the <code>mitml</code> package by using the function <code>testConstraints()</code>, without the need for additional packages.</p>
+<p>For example, the same results as those for the pairwise contrasts above can also be obtained as follows:</p>
+<pre class="r"><code># contrast between B and A
+testConstraints(fit1, constraints = &quot;groupB&quot;)</code></pre>
+<pre><code># 
+# Call:
+# 
+# testConstraints(model = fit1, constraints = &quot;groupB&quot;)
+# 
+# Hypothesis test calculated from 100 imputed data sets. The following
+# constraints were specified:
+# 
+#              Estimate Std. Error 
+#    groupB:      0.204      0.200 
+# 
+# Combination method: D1 
+# 
+#     F.value      df1      df2    P(&gt;F)      RIV 
+#       1.044        1 4466.970    0.307    0.167 
+# 
+# Unadjusted hypothesis test as appropriate in larger samples.</code></pre>
+<pre class="r"><code># contrast between C and A
+testConstraints(fit1, constraints = &quot;groupC&quot;)</code></pre>
+<pre><code># 
+# Call:
+# 
+# testConstraints(model = fit1, constraints = &quot;groupC&quot;)
+# 
+# Hypothesis test calculated from 100 imputed data sets. The following
+# constraints were specified:
+# 
+#              Estimate Std. Error 
+#    groupC:     -0.328      0.204 
+# 
+# Combination method: D1 
+# 
+#     F.value      df1      df2    P(&gt;F)      RIV 
+#       2.594        1 3042.567    0.107    0.210 
+# 
+# Unadjusted hypothesis test as appropriate in larger samples.</code></pre>
+<pre class="r"><code># contrast between C and B
+testConstraints(fit1, constraints = &quot;groupC - groupB&quot;)</code></pre>
+<pre><code># 
+# Call:
+# 
+# testConstraints(model = fit1, constraints = &quot;groupC - groupB&quot;)
+# 
+# Hypothesis test calculated from 100 imputed data sets. The following
+# constraints were specified:
+# 
+#                       Estimate Std. Error 
+#    groupC - groupB:     -0.532      0.202 
+# 
+# Combination method: D1 
+# 
+#     F.value      df1      df2    P(&gt;F)      RIV 
+#       6.966        1 3683.841    0.008    0.188 
+# 
+# Unadjusted hypothesis test as appropriate in larger samples.</code></pre>
+<a href="#fnref3" class="footnote-back">↩︎</a></li>
 </ol>
 </div>
 

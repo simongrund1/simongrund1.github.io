@@ -116,17 +116,17 @@ In R, the ANOVA can be conducted with the `lm()` function as follows.
 
 ```{r}
 # fit the ANOVA model
-fit1 <- lm(y ~ 1 + group, data = dat)
-summary(fit1)
+fit0 <- lm(y ~ 1 + group, data = dat)
+summary(fit0)
 ```
 ```{r, echo=FALSE}
-f <- summary(fit1)$fstatistic[1]
-k <- summary(fit1)$fstatistic[2]
-v <- summary(fit1)$fstatistic[3]
+f <- summary(fit0)$fstatistic[1]
+k <- summary(fit0)$fstatistic[2]
+v <- summary(fit0)$fstatistic[3]
 ```
 
 In this example, the $F$-test at the bottom of the output indicates that the group means are *not* significantly different from one another, $F(\!$ `r k`, `r v` $\!)$ = `r f` ($p$ = `r round(pf(f,k,v,lower=F),3)`).[^1] 
-In addition, the effect size ($R^2$ = `r summary(fit1)$r.squared`) is quite a bit smaller than what was used to generate the data.
+In addition, the effect size ($R^2$ = `r summary(fit0)$r.squared`) is quite a bit smaller than what was used to generate the data.
 
 In fact, this result is a direct consequence of how the missing data were simulated.
 Fortunately, there are statistical methods that can account for the missing data and help us obtain more trustworthy results.
@@ -152,14 +152,14 @@ Specifying an imputation model is very simple here. With the following command, 
 
 ```{r, cache=TRUE, results="hide"}
 # run MI
-imp <- mice(data = dat, method = "norm", m = 100)
+imp1 <- mice(data = dat, method = "norm", m = 100)
 ```
 
 The imputed data sets can then be saved as a list, containing 100 copies of the original data, in which the missing data have been replaced by different imputations.
 
 ```{r}
 # create a list of completed data sets
-implist <- mids2mitml.list(imp)
+implist1 <- mids2mitml.list(imp1)
 ```
 
 Finally, we fit the ANOVA model to each of the imputed data sets and pool the results.
@@ -168,10 +168,10 @@ The pooling es then done with the `testEstimates()` function.
 
 ```{r, cache=TRUE}
 # fit the ANOVA model
-fit2 <- with(implist, lm(y ~ 1 + group))
+fit1 <- with(implist1, lm(y ~ 1 + group))
 
 # pool the parameter estimates
-testEstimates(fit2)
+testEstimates(fit1)
 ```
 
 Notice that we did not need to actually include `x` in the ANOVA.
@@ -184,14 +184,14 @@ In this case, we wish to test the coefficients pertaining to the differences bet
 
 ```{r, cache=TRUE}
 # fit the reduced ANOVA model (without 'group')
-fit2.reduced <- with(implist, lm(y ~ 1))
+fit1.reduced <- with(implist1, lm(y ~ 1))
 ```
 
 The full and the reduced model can then be compared with the pooled version of the $F$-test (i.e., the Wald test), which is known in the literature as $D_1$.
 
 ```{r, cache=TRUE}
 # compare the two models with pooled Wald test
-testModels(fit2, fit2.reduced, method = "D1")
+testModels(fit1, fit1.reduced, method = "D1")
 ```
 
 In contrast with listwise deletion, the $F$-test under MI indicates that the groups *are* significantly different from one another.
@@ -201,7 +201,7 @@ To see this, it is worth looking at a comparison of the observed and the imputed
 
 ```{r thumbnail, echo=FALSE, fig.width=7.2, fig.height=4}
 ld <- data.frame(dat, imp=0)
-mi <- data.frame(implist[[1]], imp=1)
+mi <- data.frame(implist1[[1]], imp=1)
 dat1 <- na.omit(rbind(ld, mi))
 dat1$imp <- factor(dat1$imp, levels=c(0,1), labels=c("listwise","MI (#1)"))
 
@@ -311,15 +311,15 @@ pred <- ini$pred
 pred["y", "id"] <- -2
 
 # run MI
-imp <- mice(data = dat, pred = pred, method = "2l.pan", m = 100)
-summary(imp)
+imp2 <- mice(data = dat, pred = pred, method = "2l.pan", m = 100)
+summary(imp2)
 ```
 
 The list of imputed data sets is generated as above.
 
 ```{r}
 # create a list of completed data sets
-implist <- mids2mitml.list(imp)
+implist2 <- mids2mitml.list(imp2)
 ```
 
 The ANOVA model is then fit using `lmer()`.
@@ -328,8 +328,8 @@ This effect captures unsystematic differences between subjects, thus accounting 
 
 ```{r, cache=TRUE}
 # fit the ANOVA model
-fit3 <- with(implist, lmer(y ~ 1 + cond + (1|id)))
-testEstimates(fit3, var.comp = TRUE)
+fit2 <- with(implist2, lmer(y ~ 1 + cond + (1|id)))
+testEstimates(fit2, var.comp = TRUE)
 ```
 
 The output is similar to before, with the regression coefficients denoting the differences between the conditions. In addition, the output includes the variance of the random effect that denotes the unsystematic differences between subjects.
@@ -338,14 +338,86 @@ Testing the null hypothesis of the ANOVA again requires the specification of a r
 
 ```{r, cache=TRUE}
 # pool the parameter estimates
-fit3.reduced <- with(implist, lmer(y ~ 1 + (1|id)))
-testModels(fit3, fit3.reduced, method = "D1")
+fit2.reduced <- with(implist2, lmer(y ~ 1 + (1|id)))
+testModels(fit2, fit2.reduced, method = "D1")
 ```
 
 As in the first example, the three conditions are significantly different from one another.
 
 These two examples were obviously very simple.
 However, the same general procedure can be used for more complex ANOVA models, including models with two or more factors, interaction effects, or for mixed designs with both between- and within-subject factors.
+
+## Update: Post-hoc contrasts
+
+In the one-way ANOVA, testing the (omnibus) null hypothesis is often only one part of the journey.
+Once an omnibus test yielded a positive result, indicating that the means differ between groups, we often want to know *which* groups differ *by how much*.
+This can be done by testing post-hoc contrasts.
+
+For example, suppose we have conducted the between-subjects ANOVA with three groups---labeled A, B, and C---in Example 1.
+The omnibus $F$-test is significant, but which groups differ the most from each other?
+
+In the following, we will look at two examples for testing contrasts between groups on the basis of the imputed data obtained from MI.
+
+### Pairwise contrasts
+
+The easiest option for testing pairwise contrasts between groups is to use one of the R packages that exist for this purpose.
+For this example, we will use the [`multcomp`](https://cran.r-project.org/package=multcomp) package.[^3]
+
+```{r}
+library(multcomp)
+```
+
+In the `multcomp` package, the `glht()` function is used to test post-hoc contrasts.
+Here, we will use Tukey's method to test pairwise contrasts between the groups (i.e., B vs. A, C vs. A, and C vs. B)
+
+Based on the imputation conducted in Example 1 and ANOVA model fitted to the 100 imputed data sets (`fit1`), we can use the `lapply` function to apply `glht()` to all of the imputed data sets.
+This will perform pairwise contrasts for all data sets simultaneously.
+
+```{r, cache = TRUE}
+# perform pairwise comparisons (Tukey)
+fit1.pairwise <- lapply(fit1, glht, linfct = mcp(group = "Tukey"))
+```
+
+Next, the parameter estimates must be pooled across the imputed data sets.
+The object created by `lapply`, however, is only a simple list and needs to be converted into a `mitml.result` object.
+Then, we can pool the results as usual.
+
+```{r, cache = TRUE}
+# convert to "mitml.result" and pool the parameter estimates
+fit1.pairwise <- as.mitml.result(fit1.pairwise)
+testEstimates(fit1.pairwise)
+```
+
+In this example, it seems that the means differ primarily between groups B and C, whereas those between the groups B and A and C and A, respectively, are somewhat smaller and not statistically significant.
+
+### Other contrasts
+
+The same method can be used to test more specific hypotheses.
+For example, we may be interested in how the mean in one group (say B) compares with the means in the other two groups (say A and C).
+Such a specific hypothesis can be tested with `glht()` by providing a symbolic representation of the contrast.
+
+```{r}
+# specify contrast comparing group B with groups A and C
+fit1.B.vs.AC <- lapply(fit1, glht, linfct = mcp(group = "B - (A + C)/2 = 0"))
+```
+
+The resulting object is then converted to the `mitml.result` format, and the results are pooled as before.
+
+```{r}
+# convert to "mitml.result" and pool the parameter estimates
+fit1.B.vs.AC <- as.mitml.result(fit1.B.vs.AC)
+testEstimates(fit1.B.vs.AC)
+```
+
+This contrast, too, appears to be statistically significant (although just barely so).
+
+### Note on multiple comparisons
+
+In many cases, it makes sense to correct for multiple comparisons when testing post-hoc contrasts, for example by applying corrections to the $p$-values obtained from multiple tests or by adjusting the $\alpha$ level with which these are compared.
+
+Unfortunately, software solutions that provide these corrections for multiply imputed data are in short supply.
+For this reason, these corrections need to be applied "by hand." 
+For example, to apply a Bonferroni correction, we would simply follow the steps outlined above but adjust the $\alpha$ level with which we compare the $p$-values in the pooled results obtained from MI.
 
 ## Procedures other than MI
 
@@ -379,14 +451,15 @@ To read more about ANOVA models and the treatment of missing data therein, you c
   <li id="vanGinkel2014">van Ginkel, J. R., &amp; Kroonenberg, P. M. (2014). Analysis of variance of multiply imputed data. <i>Multivariate Behavioral Research</i>, <i>49</i>, 78–91. <a href="https://doi.org/10.1080/00273171.2013.855890">doi:10.1080/00273171.2013.855890</a></li>
 </ul>
 
+
 [^1]: The hypothesis test in ANOVA is a Wald test that simultaneously tests all the differences between groups against zero. In this example, these differences are represented by the regression coefficients for `groupB` and `groupC`.
 
       This can easily be verified by calculating the Wald test by hand:
 
       ```{r}
       # estimates and covariance matrix
-      b <- coef(fit1)[-1]
-      V <- vcov(fit1)[-1,-1]
+      b <- coef(fit0)[-1]
+      V <- vcov(fit0)[-1,-1]
       
       # Wald-test
       F <- b %*% solve(V) %*% b / 2      # F statistic
@@ -402,8 +475,23 @@ To read more about ANOVA models and the treatment of missing data therein, you c
       ```{r}
       # define and test parameter constraints
       con <- c("groupB", "groupC")
-      testConstraints(fit2, constraints = con, method = "D1")
+      testConstraints(fit1, constraints = con, method = "D1")
       ```
 
       The results of this are identical to those of `testModels()`.
+
+[^3]: Post-hoc contrasts can also be tested with the `mitml` package by using the function `testConstraints()`, without the need for additional packages.
+
+      For example, the same results as those for the pairwise contrasts above can also be obtained as follows:
+      
+      ```{r}
+      # contrast between B and A
+      testConstraints(fit1, constraints = "groupB")
+      
+      # contrast between C and A
+      testConstraints(fit1, constraints = "groupC")
+      
+      # contrast between C and B
+      testConstraints(fit1, constraints = "groupC - groupB")
+      ```
 
