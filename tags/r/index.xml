@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Simon Grund [R]</title>
+    <title>Simon Grund [r]</title>
     <link>https://simongrund1.github.io/tags/r/</link>
-    <description>Recent content on Simon Grund [R]</description>
+    <description>Recent content on Simon Grund [r]</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 03 Jan 2019 00:00:00 +0000</lastBuildDate>
@@ -385,16 +384,16 @@ testEstimates(fit, var.comp = TRUE)&lt;/code&gt;&lt;/pre&gt;
 # Final parameter estimates and inferences obtained from 20 imputed data sets.
 # 
 #              Estimate Std.Error   t.value        df   P(&amp;gt;|t|)       RIV       FMI 
-# (Intercept)    -0.016     0.083    -0.193  2092.008     0.847     0.105     0.096 
-# x               0.191     0.017    10.997   179.755     0.000     0.482     0.333 
-# x.cls           0.456     0.056     8.119   294.696     0.000     0.340     0.259 
-# x.sch           0.358     0.154     2.324  1614.766     0.020     0.122     0.110 
-# z              -0.141     0.028    -5.046   394.655     0.000     0.281     0.223 
-# w              -0.069     0.085    -0.810   351.561     0.419     0.303     0.237 
+# (Intercept)    -0.025     0.082    -0.306  3462.095     0.760     0.080     0.075 
+# x               0.190     0.019    10.186   113.399     0.000     0.693     0.419 
+# x.cls           0.460     0.058     7.968   220.257     0.000     0.416     0.300 
+# x.sch           0.352     0.149     2.359  3807.532     0.018     0.076     0.071 
+# z              -0.135     0.028    -4.774   363.762     0.000     0.296     0.233 
+# w              -0.071     0.083    -0.860   446.933     0.390     0.260     0.210 
 # 
 #                             Estimate 
-# Intercept~~Intercept|class     0.083 
-# Intercept~~Intercept|school    0.252 
+# Intercept~~Intercept|class     0.084 
+# Intercept~~Intercept|school    0.247 
 # Residual~~Residual             0.312 
 # 
 # Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
@@ -639,14 +638,14 @@ testEstimates(fit, var.comp = TRUE)&lt;/code&gt;&lt;/pre&gt;
 # Final parameter estimates and inferences obtained from 20 imputed data sets.
 # 
 #                Estimate   Std.Error     t.value          df     P(&amp;gt;|t|)         RIV         FMI 
-# (Intercept)      -0.148       0.106      -1.394   57324.620       0.163       0.019       0.018 
-# a                 0.656       0.124       5.292 2789469.379       0.000       0.003       0.003 
-# z                -0.252       0.075      -3.368     210.939       0.001       0.429       0.307 
+# (Intercept)      -0.161       0.106      -1.514  154490.706       0.130       0.011       0.011 
+# a                 0.659       0.124       5.324 2581059.039       0.000       0.003       0.003 
+# z                -0.248       0.072      -3.469     361.838       0.001       0.297       0.233 
 # 
 #                              Estimate 
-# Intercept~~Intercept|subject    0.340 
-# Intercept~~Intercept|item       0.187 
-# Residual~~Residual              0.460 
+# Intercept~~Intercept|subject    0.341 
+# Intercept~~Intercept|item       0.186 
+# Residual~~Residual              0.462 
 # 
 # Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The results are again close to the true values I used to generate the data.&lt;/p&gt;
@@ -695,15 +694,15 @@ van Buuren, S., &amp;amp; Groothuis-Oudshoorn, K. (2011). MICE: Multivariate imp
 &lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;In the present case, aggregating &lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(z\)&lt;/span&gt; is not useful, because all items are answered by all subjects, so that the aggregates of &lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; at the person level and &lt;span class=&#34;math inline&#34;&gt;\(z\)&lt;/span&gt; at the item level are constant (e.g., every person responds to the same number of items in the experimental and the control condition).
 However, aggregated variables can still play a role in cross-classified data.
 For example, there can be other variables at level 1 (e.g., a covariate providing information about individual trials) or the experimental manipulation may be applied at level 1 (e.g., if it is applied randomly to items on a trial-by-trial basis).
-In such a case, the aggregated of these variables would &lt;em&gt;not&lt;/em&gt; be constant and may need to be taken into account during MI.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+In such a case, the aggregated of these variables would &lt;em&gt;not&lt;/em&gt; be constant and may need to be taken into account during MI.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;If the item-level variable &lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; also had missing data, we would treat it the same way (i.e., with &lt;code&gt;2lonly.norm&lt;/code&gt;) but specify a different cluster indicator in the predictor matrix (i.e., &lt;code&gt;item&lt;/code&gt;).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# specify imputation method
 impMethod[&amp;quot;a&amp;quot;] &amp;lt;- &amp;quot;2lonly.norm&amp;quot;
 
 # specify cluster indicator
 predMatrix[&amp;quot;a&amp;quot;, &amp;quot;item&amp;quot;] &amp;lt;- -2&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This is not needed here because &lt;code&gt;a&lt;/code&gt; has no missing data.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;If there are other variables that need to be aggregated (e.g., other variables at level 1), then the aggregation needs to be done “by hand”, either by calculating the aggregated variables beforehand (if the variables are completely observed) or by using “passive imputation” (if they are incomplete).&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;This is not needed here because &lt;code&gt;a&lt;/code&gt; has no missing data.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;If there are other variables that need to be aggregated (e.g., other variables at level 1), then the aggregation needs to be done “by hand”, either by calculating the aggregated variables beforehand (if the variables are completely observed) or by using “passive imputation” (if they are incomplete).&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>
@@ -859,9 +858,9 @@ testEstimates(fit2)&lt;/code&gt;&lt;/pre&gt;
 # Final parameter estimates and inferences obtained from 100 imputed data sets.
 # 
 #              Estimate Std.Error   t.value        df   P(&amp;gt;|t|)       RIV       FMI 
-# (Intercept)     0.027     0.144     0.190  3178.456     0.850     0.214     0.177 
-# groupB          0.207     0.198     1.044  5853.312     0.297     0.149     0.130 
-# groupC         -0.333     0.208    -1.600  2213.214     0.110     0.268     0.212 
+# (Intercept)     0.025     0.145     0.171  2749.785     0.864     0.234     0.190 
+# groupB          0.204     0.200     1.022  4816.135     0.307     0.167     0.144 
+# groupC         -0.328     0.204    -1.611  3274.908     0.107     0.210     0.174 
 # 
 # Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Notice that we did not need to actually include &lt;code&gt;x&lt;/code&gt; in the ANOVA.
@@ -883,7 +882,7 @@ testModels(fit2, fit2.reduced, method = &amp;quot;D1&amp;quot;)&lt;/code&gt;&lt;
 # Combination method: D1 
 # 
 #     F.value      df1      df2    P(&amp;gt;F)      RIV 
-#       3.635        2 7186.601    0.026    0.195 
+#       3.543        2 7588.022    0.029    0.188 
 # 
 # Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;In contrast with listwise deletion, the &lt;span class=&#34;math inline&#34;&gt;\(F\)&lt;/span&gt;-test under MI indicates that the groups &lt;em&gt;are&lt;/em&gt; significantly different from one another.&lt;/p&gt;
@@ -918,36 +917,36 @@ Fortunately, the procedure for the treatment and missing data and the analysis r
 &lt;td&gt;1&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;A&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-1.699&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-1.11&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1.318&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.235&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;even&#34;&gt;
 &lt;td&gt;2&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;B&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-1.022&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-1.11&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.085&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.235&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;odd&#34;&gt;
 &lt;td&gt;3&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;C&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-0.287&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-1.11&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.040&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.235&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;even&#34;&gt;
 &lt;td&gt;4&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;A&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-1.588&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-1.11&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.680&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.235&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class=&#34;odd&#34;&gt;
 &lt;td&gt;5&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
 &lt;td align=&#34;right&#34;&gt;B&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-2.028&lt;/td&gt;
-&lt;td align=&#34;right&#34;&gt;-1.11&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;0.344&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;-0.235&lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;
@@ -955,7 +954,7 @@ Fortunately, the procedure for the treatment and missing data and the analysis r
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;id&lt;/code&gt;: the subject identifier&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;cond&lt;/code&gt;: the grouping variable (within subjects)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;y&lt;/code&gt;: the repeated measurements for the outcome variable (with 18.7% missing data)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;y&lt;/code&gt;: the repeated measurements for the outcome variable (with 16% missing data)&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;x&lt;/code&gt;: a subject-specific covariate&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Like above, persons with lower values in &lt;code&gt;x&lt;/code&gt; had a higher chance of missing data in &lt;code&gt;y&lt;/code&gt;. Notice that &lt;code&gt;cond&lt;/code&gt; varies within subjects, making the repeated measures for each condition “nested” within subjects.&lt;/p&gt;
@@ -991,15 +990,15 @@ testEstimates(fit3, var.comp = TRUE)&lt;/code&gt;&lt;/pre&gt;
 # 
 # Final parameter estimates and inferences obtained from 100 imputed data sets.
 # 
-#               Estimate  Std.Error    t.value         df    P(&amp;gt;|t|)        RIV        FMI 
-# (Intercept)     -0.065      0.227     -0.286 108243.160      0.775      0.031      0.030 
-# condB            0.352      0.112      3.151   3197.566      0.002      0.214      0.176 
-# condC            0.048      0.114      0.418   2120.953      0.676      0.276      0.217 
+#              Estimate Std.Error   t.value        df   P(&amp;gt;|t|)       RIV       FMI 
+# (Intercept)     0.069     0.161     0.428 42782.449     0.668     0.051     0.048 
+# condB           0.217     0.107     2.026  2738.362     0.043     0.235     0.191 
+# condC          -0.061     0.107    -0.569  2786.073     0.569     0.232     0.189 
 # 
 #                         Estimate 
-# Intercept~~Intercept|id    0.893 
-# Residual~~Residual         0.514 
-# ICC|id                     0.635 
+# Intercept~~Intercept|id    0.399 
+# Residual~~Residual         0.466 
+# ICC|id                     0.461 
 # 
 # Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The output is similar to before, with the regression coefficients denoting the differences between the conditions. In addition, the output includes the variance of the random effect that denotes the unsystematic differences between subjects.&lt;/p&gt;
@@ -1016,7 +1015,7 @@ testModels(fit3, fit3.reduced, method = &amp;quot;D1&amp;quot;)&lt;/code&gt;&lt;
 # Combination method: D1 
 # 
 #     F.value      df1      df2    P(&amp;gt;F)      RIV 
-#       5.681        2 4847.199    0.003    0.248 
+#       3.738        2 5512.706    0.024    0.229 
 # 
 # Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;As in the first example, the three conditions are significantly different from one another.&lt;/p&gt;
@@ -1081,7 +1080,7 @@ F &amp;lt;- b %*% solve(V) %*% b / 2      # F statistic
 pf(F, 2, 116, lower.tail = FALSE)  # p value&lt;/code&gt;&lt;/pre&gt;
 &lt;pre&gt;&lt;code&gt;#      [,1]
 # [1,] 0.26&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The resulting &lt;span class=&#34;math inline&#34;&gt;\(F\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(p\)&lt;/span&gt; value are exactly the same as in the output above.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;The resulting &lt;span class=&#34;math inline&#34;&gt;\(F\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(p\)&lt;/span&gt; value are exactly the same as in the output above.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;Technically, a reduced model is not necessary (only convenient). The Wald test can be formulated equivalently with a linear constraint on the parameters of the full model (i.e., setting them to zero).&lt;/p&gt;
 &lt;p&gt;Under MI, this can be done, too, with the &lt;code&gt;testConstraints()&lt;/code&gt; function:&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# define and test parameter constraints
@@ -1096,16 +1095,16 @@ testConstraints(fit2, constraints = con, method = &amp;quot;D1&amp;quot;)&lt;/co
 # constraints were specified:
 # 
 #              Estimate Std. Error 
-#    groupB:      0.207      0.202 
-#    groupC:     -0.333      0.202 
+#    groupB:      0.204      0.202 
+#    groupC:     -0.328      0.202 
 # 
 # Combination method: D1 
 # 
 #     F.value      df1      df2    P(&amp;gt;F)      RIV 
-#       3.635        2 7186.601    0.026    0.195 
+#       3.543        2 7588.022    0.029    0.188 
 # 
 # Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The results of this are identical to those of &lt;code&gt;testModels()&lt;/code&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;The results of this are identical to those of &lt;code&gt;testModels()&lt;/code&gt;.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>

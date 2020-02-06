@@ -6,7 +6,7 @@ images: [ "https://simongrund1.github.io/posts/anova-with-multiply-imputed-data-
 thumbnail: "thumbnail-1.png"
 draft: false
 ---
-
+ 
 ```{r setup, include=FALSE, cache=FALSE}
 library(knitr)
 library(ggplot2)
@@ -22,7 +22,7 @@ gruvy <- theme_gray(base_size=14) +
 
 set.seed(123)
 ```
-
+ 
 The analysis of variance, or ANOVA, is among the most popular methods for analyzing how an outcome variable differs between groups, for example, in observational studies or in experiments with different conditions.
 
 But how do we conduct the ANOVA when there are missing data?
@@ -92,7 +92,7 @@ dat[ rstar<qnorm(pmd), "y" ] <- NA
 
 # save data
 #save(dat, file="example1.Rdata")
-#write.csv(dat, file="example1.csv")
+#write.csv(dat, file="example1.csv", row.names=F)
 ```
 
 ```{r, echo=FALSE}
@@ -275,7 +275,7 @@ dat[ rstar<qnorm(pmd), "y" ] <- NA
 
 # save data
 #save(dat, file="example2.Rdata")
-#write.csv(dat, file="example2.csv")
+#write.csv(dat, file="example2.csv", row.names=F)
 ```
 
 ```{r, echo=FALSE}

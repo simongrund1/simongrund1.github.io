@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Simon Grund [Multilevel]</title>
+    <title>Simon Grund [multilevel]</title>
     <link>https://simongrund1.github.io/tags/multilevel/</link>
-    <description>Recent content on Simon Grund [Multilevel]</description>
+    <description>Recent content on Simon Grund [multilevel]</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 03 Jan 2019 00:00:00 +0000</lastBuildDate>
@@ -385,16 +384,16 @@ testEstimates(fit, var.comp = TRUE)&lt;/code&gt;&lt;/pre&gt;
 # Final parameter estimates and inferences obtained from 20 imputed data sets.
 # 
 #              Estimate Std.Error   t.value        df   P(&amp;gt;|t|)       RIV       FMI 
-# (Intercept)    -0.016     0.083    -0.193  2092.008     0.847     0.105     0.096 
-# x               0.191     0.017    10.997   179.755     0.000     0.482     0.333 
-# x.cls           0.456     0.056     8.119   294.696     0.000     0.340     0.259 
-# x.sch           0.358     0.154     2.324  1614.766     0.020     0.122     0.110 
-# z              -0.141     0.028    -5.046   394.655     0.000     0.281     0.223 
-# w              -0.069     0.085    -0.810   351.561     0.419     0.303     0.237 
+# (Intercept)    -0.025     0.082    -0.306  3462.095     0.760     0.080     0.075 
+# x               0.190     0.019    10.186   113.399     0.000     0.693     0.419 
+# x.cls           0.460     0.058     7.968   220.257     0.000     0.416     0.300 
+# x.sch           0.352     0.149     2.359  3807.532     0.018     0.076     0.071 
+# z              -0.135     0.028    -4.774   363.762     0.000     0.296     0.233 
+# w              -0.071     0.083    -0.860   446.933     0.390     0.260     0.210 
 # 
 #                             Estimate 
-# Intercept~~Intercept|class     0.083 
-# Intercept~~Intercept|school    0.252 
+# Intercept~~Intercept|class     0.084 
+# Intercept~~Intercept|school    0.247 
 # Residual~~Residual             0.312 
 # 
 # Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
@@ -639,14 +638,14 @@ testEstimates(fit, var.comp = TRUE)&lt;/code&gt;&lt;/pre&gt;
 # Final parameter estimates and inferences obtained from 20 imputed data sets.
 # 
 #                Estimate   Std.Error     t.value          df     P(&amp;gt;|t|)         RIV         FMI 
-# (Intercept)      -0.148       0.106      -1.394   57324.620       0.163       0.019       0.018 
-# a                 0.656       0.124       5.292 2789469.379       0.000       0.003       0.003 
-# z                -0.252       0.075      -3.368     210.939       0.001       0.429       0.307 
+# (Intercept)      -0.161       0.106      -1.514  154490.706       0.130       0.011       0.011 
+# a                 0.659       0.124       5.324 2581059.039       0.000       0.003       0.003 
+# z                -0.248       0.072      -3.469     361.838       0.001       0.297       0.233 
 # 
 #                              Estimate 
-# Intercept~~Intercept|subject    0.340 
-# Intercept~~Intercept|item       0.187 
-# Residual~~Residual              0.460 
+# Intercept~~Intercept|subject    0.341 
+# Intercept~~Intercept|item       0.186 
+# Residual~~Residual              0.462 
 # 
 # Unadjusted hypothesis test as appropriate in larger samples.&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The results are again close to the true values I used to generate the data.&lt;/p&gt;
@@ -695,15 +694,15 @@ van Buuren, S., &amp;amp; Groothuis-Oudshoorn, K. (2011). MICE: Multivariate imp
 &lt;li id=&#34;fn1&#34;&gt;&lt;p&gt;In the present case, aggregating &lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(z\)&lt;/span&gt; is not useful, because all items are answered by all subjects, so that the aggregates of &lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; at the person level and &lt;span class=&#34;math inline&#34;&gt;\(z\)&lt;/span&gt; at the item level are constant (e.g., every person responds to the same number of items in the experimental and the control condition).
 However, aggregated variables can still play a role in cross-classified data.
 For example, there can be other variables at level 1 (e.g., a covariate providing information about individual trials) or the experimental manipulation may be applied at level 1 (e.g., if it is applied randomly to items on a trial-by-trial basis).
-In such a case, the aggregated of these variables would &lt;em&gt;not&lt;/em&gt; be constant and may need to be taken into account during MI.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+In such a case, the aggregated of these variables would &lt;em&gt;not&lt;/em&gt; be constant and may need to be taken into account during MI.&lt;a href=&#34;#fnref1&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li id=&#34;fn2&#34;&gt;&lt;p&gt;If the item-level variable &lt;span class=&#34;math inline&#34;&gt;\(a\)&lt;/span&gt; also had missing data, we would treat it the same way (i.e., with &lt;code&gt;2lonly.norm&lt;/code&gt;) but specify a different cluster indicator in the predictor matrix (i.e., &lt;code&gt;item&lt;/code&gt;).&lt;/p&gt;
 &lt;pre class=&#34;r&#34;&gt;&lt;code&gt;# specify imputation method
 impMethod[&amp;quot;a&amp;quot;] &amp;lt;- &amp;quot;2lonly.norm&amp;quot;
 
 # specify cluster indicator
 predMatrix[&amp;quot;a&amp;quot;, &amp;quot;item&amp;quot;] &amp;lt;- -2&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;This is not needed here because &lt;code&gt;a&lt;/code&gt; has no missing data.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;If there are other variables that need to be aggregated (e.g., other variables at level 1), then the aggregation needs to be done “by hand”, either by calculating the aggregated variables beforehand (if the variables are completely observed) or by using “passive imputation” (if they are incomplete).&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;This is not needed here because &lt;code&gt;a&lt;/code&gt; has no missing data.&lt;a href=&#34;#fnref2&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li id=&#34;fn3&#34;&gt;&lt;p&gt;If there are other variables that need to be aggregated (e.g., other variables at level 1), then the aggregation needs to be done “by hand”, either by calculating the aggregated variables beforehand (if the variables are completely observed) or by using “passive imputation” (if they are incomplete).&lt;a href=&#34;#fnref3&#34; class=&#34;footnote-back&#34;&gt;↩︎&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 </description>

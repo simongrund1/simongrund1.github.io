@@ -393,7 +393,7 @@ dat$w[rw] <- NA
 
 # save data
 #save(dat, file="example_3l.Rdata")
-#write.csv(dat, file="example_3l.csv")
+#write.csv(dat, file="example_3l.csv", row.names=F)
 ```
 
 For this example, I simulated data with a three-level structure consisting of 50 schools (level 3), five classrooms per school (level 2), and 10 students per classroom (level 1, total $n$ = `r n*J*K`).
@@ -655,7 +655,7 @@ dat$y[3] <- NA
 
 # save data
 #save(dat, file="example_cc.Rdata")
-#write.csv(dat, file="example_cc.csv")
+#write.csv(dat, file="example_cc.csv", row.names=F)
 ```
 
 For this example, I simulated data with a cross-classified structure and a total of $n$ = `r n*J*K` responses (level 1) from `r K` subjects (level 2b) to `r J` items (level 2a).

@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Simon Grund [News]</title>
+    <title>Simon Grund [news]</title>
     <link>https://simongrund1.github.io/tags/news/</link>
-    <description>Recent content on Simon Grund [News]</description>
+    <description>Recent content on Simon Grund [news]</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 27 May 2018 00:00:00 +0000</lastBuildDate>

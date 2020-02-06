@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Simon Grund [Softwares]</title>
@@ -17,46 +16,28 @@
       <pubDate>Tue, 01 May 2018 22:16:00 +0200</pubDate>
       
       <guid>https://simongrund1.github.io/software/mitml/</guid>
-      <description>
-
-&lt;p&gt;This &lt;a href=&#34;https://www.r-project.org/&#34;&gt;R&lt;/a&gt; package provides tools for multiple imputation of missing data in multilevel modeling.
+      <description>&lt;p&gt;This &lt;a href=&#34;https://www.r-project.org/&#34;&gt;R&lt;/a&gt; package provides tools for multiple imputation of missing data in multilevel modeling.
 It includes a user-friendly interface to the packages &lt;code&gt;pan&lt;/code&gt; and &lt;code&gt;jomo&lt;/code&gt;, and several functions for visualization, data management, and the analysis of multiply imputed data sets.&lt;/p&gt;
-
 &lt;p&gt;The purpose of &lt;code&gt;mitml&lt;/code&gt; is to provide users with a set of effective and user-friendly tools for multiple imputation of multilevel data without requiring advanced knowledge of its statistical underpinnings.
 Examples and additional information can be found in the official &lt;a href=&#34;https://cran.r-project.org/package=mitml/mitml.pdf&#34;&gt;documentation&lt;/a&gt; of the package and in the &lt;a href=&#34;https://github.com/simongrund1/mitml/wiki&#34;&gt;Wiki&lt;/a&gt; pages on GitHub.&lt;/p&gt;
-
 &lt;h4 id=&#34;cran-version&#34;&gt;CRAN version&lt;/h4&gt;
-
 &lt;p&gt;The official version of &lt;code&gt;mitml&lt;/code&gt; is hosted on CRAN and may be found &lt;a href=&#34;https://cran.r-project.org/package=mitml&#34;&gt;here&lt;/a&gt;. The CRAN version can be installed from within R using:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;install.packages(&amp;quot;mitml&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;github-version&#34;&gt;GitHub version&lt;/h4&gt;
-
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;install.packages&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;mitml&amp;#34;&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;github-version&#34;&gt;GitHub version&lt;/h4&gt;
 &lt;p&gt;The development version of &lt;code&gt;mitml&lt;/code&gt; is hosted on GitHub, allowing better tracking of &lt;a href=&#34;https://github.com/simongrund1/mitml/issues&#34;&gt;issues&lt;/a&gt; and possibly containing features and changes in advance. The GitHub version can be installed using &lt;code&gt;devtools&lt;/code&gt; as:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-r&#34;&gt;install.packages(&amp;quot;devtools&amp;quot;)
-devtools::install_github(&amp;quot;simongrund1/mitml&amp;quot;)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h4 id=&#34;documentation-pdf&#34;&gt;Documentation (PDF)&lt;/h4&gt;
-
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-r&#34; data-lang=&#34;r&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;install.packages&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;devtools&amp;#34;&lt;/span&gt;)
+devtools&lt;span style=&#34;color:#f92672&#34;&gt;::&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;install_github&lt;/span&gt;(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;simongrund1/mitml&amp;#34;&lt;/span&gt;)
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;documentation-pdf&#34;&gt;Documentation (PDF)&lt;/h4&gt;
 &lt;p&gt;The official &lt;a href=&#34;https://cran.r-project.org/web/packages/mitml/mitml.pdf&#34;&gt;documentation&lt;/a&gt; of the package can be found on &lt;a href=&#34;https://cran.r-project.org/package=mitml&#34;&gt;CRAN&lt;/a&gt;.&lt;/p&gt;
-
 &lt;h4 id=&#34;vignettes-html&#34;&gt;Vignettes (HTML)&lt;/h4&gt;
-
 &lt;p&gt;Further examples and documentation are provided in HTML vignettes on &lt;a href=&#34;https://cran.r-project.org/package=mitml&#34;&gt;CRAN&lt;/a&gt; and on the follwing pages.&lt;/p&gt;
-
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;https://cdn.rawgit.com/simongrund1/mitml/abdc7d58/vignettes/Introduction.html&#34;&gt;Introduction&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://cdn.rawgit.com/simongrund1/mitml/abdc7d58/vignettes/Level2.html&#34;&gt;Imputation of missing data at Level 2&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://cdn.rawgit.com/simongrund1/mitml/abdc7d58/vignettes/Analysis.html&#34;&gt;Analysis of multiply imputed data sets&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-
 &lt;p&gt;If you use &lt;code&gt;mitml&lt;/code&gt; and have suggestions for improvement, please email me (see &lt;a href=&#34;https://cran.r-project.org/package=mitml&#34;&gt;here&lt;/a&gt;) or file an &lt;a href=&#34;https://github.com/simongrund1/mitml/issues&#34;&gt;issue&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=mitml&#34;&gt;&lt;img src=&#34;http://www.r-pkg.org/badges/version/mitml&#34; alt=&#34;&#34; /&gt;&lt;/a&gt;&lt;a href=&#34;https://cran.r-project.org/package=mitml&#34;&gt;&lt;img src=&#34;http://cranlogs.r-pkg.org/badges/mitml&#34; alt=&#34;&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://cran.r-project.org/package=mitml&#34;&gt;&lt;img src=&#34;http://www.r-pkg.org/badges/version/mitml&#34; alt=&#34;&#34;&gt;&lt;/a&gt;&lt;a href=&#34;https://cran.r-project.org/package=mitml&#34;&gt;&lt;img src=&#34;http://cranlogs.r-pkg.org/badges/mitml&#34; alt=&#34;&#34;&gt;&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

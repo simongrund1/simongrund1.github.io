@@ -3,7 +3,7 @@
 <head>
   <link href="http://gmpg.org/xfn/11" rel="profile">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta name="generator" content="Hugo 0.53" />
+  <meta name="generator" content="Hugo 0.63.2" />
 
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
@@ -27,15 +27,16 @@
   
   <meta property="og:title" content="mitml" />
 <meta property="og:description" content="This R package provides tools for multiple imputation of missing data in multilevel modeling. It includes a user-friendly interface to the packages pan and jomo, and several functions for visualization, data management, and the analysis of multiply imputed data sets.
-The purpose of mitml is to provide users with a set of effective and user-friendly tools for multiple imputation of multilevel data without requiring advanced knowledge of its statistical underpinnings." />
+The purpose of mitml is to provide users with a set of effective and user-friendly tools for multiple imputation of multilevel data without requiring advanced knowledge of its statistical underpinnings. Examples and additional information can be found in the official documentation of the package and in the Wiki pages on GitHub." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://simongrund1.github.io/software/mitml/" /><meta property="article:published_time" content="2018-05-01T22:16:00&#43;02:00"/>
-<meta property="article:modified_time" content="2018-05-01T22:16:00&#43;02:00"/>
+<meta property="og:url" content="https://simongrund1.github.io/software/mitml/" />
+<meta property="article:published_time" content="2018-05-01T22:16:00+02:00" />
+<meta property="article:modified_time" content="2018-05-01T22:16:00+02:00" />
 
   <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="mitml"/>
 <meta name="twitter:description" content="This R package provides tools for multiple imputation of missing data in multilevel modeling. It includes a user-friendly interface to the packages pan and jomo, and several functions for visualization, data management, and the analysis of multiply imputed data sets.
-The purpose of mitml is to provide users with a set of effective and user-friendly tools for multiple imputation of multilevel data without requiring advanced knowledge of its statistical underpinnings."/>
+The purpose of mitml is to provide users with a set of effective and user-friendly tools for multiple imputation of multilevel data without requiring advanced knowledge of its statistical underpinnings. Examples and additional information can be found in the official documentation of the package and in the Wiki pages on GitHub."/>
 
 
   
@@ -167,7 +168,7 @@ The purpose of mitml is to provide users with a set of effective and user-friend
 
     <div class="sidebar-footer">
       <p>Based on Hyde theme for Hugo</p>
-      <p>&copy; 2019 / All rights reserved</p>
+      <p>&copy; 2020 / All rights reserved</p>
     </div>
 
   </div>
@@ -182,46 +183,28 @@ The purpose of mitml is to provide users with a set of effective and user-friend
     <div class="post">
   <h1 class="post-title">mitml: Tools for multiple imputation in multilevel modeling</h1>
   <span class="post-date">May 1, 2018<span style="padding-left:0.5rem"></span></span>
-  
-
-<p>This <a href="https://www.r-project.org/">R</a> package provides tools for multiple imputation of missing data in multilevel modeling.
+  <p>This <a href="https://www.r-project.org/">R</a> package provides tools for multiple imputation of missing data in multilevel modeling.
 It includes a user-friendly interface to the packages <code>pan</code> and <code>jomo</code>, and several functions for visualization, data management, and the analysis of multiply imputed data sets.</p>
-
 <p>The purpose of <code>mitml</code> is to provide users with a set of effective and user-friendly tools for multiple imputation of multilevel data without requiring advanced knowledge of its statistical underpinnings.
 Examples and additional information can be found in the official <a href="https://cran.r-project.org/package=mitml/mitml.pdf">documentation</a> of the package and in the <a href="https://github.com/simongrund1/mitml/wiki">Wiki</a> pages on GitHub.</p>
-
 <h4 id="cran-version">CRAN version</h4>
-
 <p>The official version of <code>mitml</code> is hosted on CRAN and may be found <a href="https://cran.r-project.org/package=mitml">here</a>. The CRAN version can be installed from within R using:</p>
-
-<pre><code class="language-r">install.packages(&quot;mitml&quot;)
-</code></pre>
-
-<h4 id="github-version">GitHub version</h4>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">install.packages</span>(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">mitml&#34;</span>)
+</code></pre></div><h4 id="github-version">GitHub version</h4>
 <p>The development version of <code>mitml</code> is hosted on GitHub, allowing better tracking of <a href="https://github.com/simongrund1/mitml/issues">issues</a> and possibly containing features and changes in advance. The GitHub version can be installed using <code>devtools</code> as:</p>
-
-<pre><code class="language-r">install.packages(&quot;devtools&quot;)
-devtools::install_github(&quot;simongrund1/mitml&quot;)
-</code></pre>
-
-<h4 id="documentation-pdf">Documentation (PDF)</h4>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-r" data-lang="r"><span style="color:#a6e22e">install.packages</span>(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">devtools&#34;</span>)
+devtools<span style="color:#f92672">::</span><span style="color:#a6e22e">install_github</span>(<span style="color:#e6db74">&#34;</span><span style="color:#e6db74">simongrund1/mitml&#34;</span>)
+</code></pre></div><h4 id="documentation-pdf">Documentation (PDF)</h4>
 <p>The official <a href="https://cran.r-project.org/web/packages/mitml/mitml.pdf">documentation</a> of the package can be found on <a href="https://cran.r-project.org/package=mitml">CRAN</a>.</p>
-
 <h4 id="vignettes-html">Vignettes (HTML)</h4>
-
 <p>Further examples and documentation are provided in HTML vignettes on <a href="https://cran.r-project.org/package=mitml">CRAN</a> and on the follwing pages.</p>
-
 <ul>
 <li><a href="https://cdn.rawgit.com/simongrund1/mitml/abdc7d58/vignettes/Introduction.html">Introduction</a></li>
 <li><a href="https://cdn.rawgit.com/simongrund1/mitml/abdc7d58/vignettes/Level2.html">Imputation of missing data at Level 2</a></li>
 <li><a href="https://cdn.rawgit.com/simongrund1/mitml/abdc7d58/vignettes/Analysis.html">Analysis of multiply imputed data sets</a></li>
 </ul>
-
 <p>If you use <code>mitml</code> and have suggestions for improvement, please email me (see <a href="https://cran.r-project.org/package=mitml">here</a>) or file an <a href="https://github.com/simongrund1/mitml/issues">issue</a>.</p>
-
-<p><a href="https://cran.r-project.org/package=mitml"><img src="http://www.r-pkg.org/badges/version/mitml" alt="" /></a><a href="https://cran.r-project.org/package=mitml"><img src="http://cranlogs.r-pkg.org/badges/mitml" alt="" /></a></p>
+<p><a href="https://cran.r-project.org/package=mitml"><img src="http://www.r-pkg.org/badges/version/mitml" alt=""></a><a href="https://cran.r-project.org/package=mitml"><img src="http://cranlogs.r-pkg.org/badges/mitml" alt=""></a></p>
 
 </div>
 
